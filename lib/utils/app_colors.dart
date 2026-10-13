@@ -1,28 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:souqna_anaqa/utils/app_brand.dart';
+
 class AppColors {
   AppColors._();
 
-  static const Color ink = Color(0xFF0F1222);
-  static const Color paper = Color(0xFFFAF8F5);
+  // هوية Vera (المصدر الوحيد: AppBrand)
+  static const Color primary = AppBrand.burgundy;
+  static const Color primaryDeep = Color(0xFF4A1021);
+  static const Color gold = AppBrand.gold;
+  static const Color goldDark = Color(
+    0xFFA8832F,
+  ); // للنصوص الذهبية على الخلفيات الفاتحة
+  static const Color cream = AppBrand.cream;
+  static const Color star =
+      AppBrand.gold; // بدل 0xFFF5A623 المكتوب في عدة ملفات
+
+  static const Color ink = Color(0xFF1C1416);
+  static const Color paper = AppBrand.cream;
   static const Color surface = Colors.white;
-  static const Color sand = Color(0xFFF2EDE6);
-  static const Color line = Color(0xFFE8E2D9);
-  static const Color muted = Color(0xFF6B6E80);
-  static const Color subtle = Color(0xFF9EA0AE);
-  static const Color success = Color(0xFF0EA5A4);
-  static const Color danger = Color(0xFFE11D48);
-  static const Color warning = Color(0xFFF59E0B);
+  static const Color sand = Color(0xFFF3EBE4);
+  static const Color line = Color(0xFFE7DDD3);
+  static const Color muted = Color(0xFF6F6368);
+  static const Color subtle = Color(0xFFA39A9D);
+  static const Color success = Color(0xFF2F7D5B);
+  static const Color danger = Color(0xFFC62828);
+  static const Color warning = Color(0xFFD9822B);
 }
 
 class AppTheme {
   AppTheme._();
 
-  static ThemeData build(Color primary) {
+  /// [primary] اختياري: بدونه يُستخدم عنابي Vera. التطبيق حاليا يمرر لون المتجر من الباكند.
+  static ThemeData build([Color primary = AppColors.primary]) {
     final scheme = ColorScheme.fromSeed(
       seedColor: primary,
       primary: primary,
+      secondary: AppColors.gold,
       surface: AppColors.surface,
       brightness: Brightness.light,
     ).copyWith(onPrimary: _onColor(primary));
@@ -130,7 +145,7 @@ class AppTheme {
         backgroundColor: AppColors.ink,
         contentTextStyle: const TextStyle(
           fontFamily: 'Plex',
-          color: Colors.white,
+          color: AppColors.cream,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
@@ -148,7 +163,7 @@ class AppTheme {
     );
   }
 
-  /// نص أسود أو أبيض حسب سطوع اللون.
+  /// نص كريمي أو أسود حسب سطوع اللون.
   static Color _onColor(Color c) =>
-      c.computeLuminance() > 0.5 ? AppColors.ink : Colors.white;
+      c.computeLuminance() > 0.5 ? AppColors.ink : AppColors.cream;
 }
