@@ -1,6 +1,6 @@
 class ApiSettings {
   static const baseUrl = "https://souqna.toldpath.com/api/v1/";
-  static const storeSlug = "karam";
+  static const storeSlug = "nakha2026";
   static const storeUrl = "${baseUrl}stores/$storeSlug";
 
   /// أقصى انتظار لأي طلب: بعده يظهر «تعذر الاتصال بالخادم» بدل تحميل لا ينتهي.
