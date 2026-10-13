@@ -9,6 +9,7 @@ import 'package:souqna_anaqa/getx_controller/app_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/user_profile_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/home_getx_controller.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_brand.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/models/banner_item.dart';
 import 'package:souqna_anaqa/models/category.dart';
@@ -156,7 +157,7 @@ class _Header extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.line),
               ),
-              child: ClipOval(child: NetImage(store?.logo)),
+              child: ClipOval(child: Image.asset(AppBrand.logoIcon)),
             );
           }),
           const SizedBox(width: 12),

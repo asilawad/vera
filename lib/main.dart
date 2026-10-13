@@ -14,6 +14,7 @@ import 'package:souqna_anaqa/getx_controller/order_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/user_profile_getx_controller.dart';
 import 'package:souqna_anaqa/screen/lunch/lunch_screen.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_brand.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 
 Future<void> main() async {
@@ -67,7 +68,7 @@ class AnaqaApp extends StatelessWidget {
       builder: (context, _) {
         Responsive.capScale(context);
         return GetMaterialApp(
-          title: 'متجر الاناقة',
+          title: AppBrand.name,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.build(Get.find<AppGetxController>().primary.value),
           locale: const Locale('ar'),
