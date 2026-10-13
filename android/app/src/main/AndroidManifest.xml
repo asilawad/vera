@@ -5,7 +5,7 @@
         <intent><action android:name="android.intent.action.DIAL"/><data android:scheme="tel"/></intent>
     </queries>
     <application
-        android:label="متجر الاناقة"
+        android:label="Vera"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -148,18 +148,15 @@ class _Header extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(20.w, 14, 20.w, 6),
       child: Row(
         children: [
-          Obx(() {
-            final store = Get.find<AppGetxController>().store.value;
-            return Container(
-              width: 46.r,
-              height: 46.r,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.line),
-              ),
-              child: ClipOval(child: Image.asset(AppBrand.logoIcon)),
-            );
-          }),
+          Container(
+            width: 46.r,
+            height: 46.r,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.line),
+            ),
+            child: ClipOval(child: Image.asset(AppBrand.logoIcon)),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Obx(() {

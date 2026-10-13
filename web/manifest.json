@@ -1,11 +1,11 @@
 {
-    "name": "متجر الاناقة",
-    "short_name": "الاناقة",
+    "name": "Vera",
+    "short_name": "Vera",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#FAF8F5",
-    "theme_color": "#F59E0B",
-    "description": "متجر الاناقة — تطبيق متجر على منصة سوقنا",
+    "background_color": "#FAF5EE",
+    "theme_color": "#7A1F36",
+    "description": "Vera — جودة تحملها معك",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

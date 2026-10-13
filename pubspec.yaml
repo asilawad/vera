@@ -1,5 +1,5 @@
 name: souqna_anaqa
-description: "متجر الاناقة — تطبيق متجر على منصة سوقنا"
+description: "Vera — جودة تحملها معك"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -79,8 +79,18 @@ flutter:
 
 # أيقونة التطبيق: شعار المتجر من لوحة التحكم.
 # لإعادة التوليد: dart run flutter_launcher_icons
+
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/icon/app_icon.png
+  image_path: "assets/brand/app_icon.png"
   remove_alpha_ios: true
+  adaptive_icon_background: "#7A1F36"
+  adaptive_icon_foreground: "assets/brand/adaptive_foreground.png"
+  adaptive_icon_foreground_inset: 0
+  adaptive_icon_monochrome: "assets/brand/monochrome.png"
+  web:
+    generate: true
+    image_path: "assets/brand/app_icon.png"
+    background_color: "#FAF5EE"
+    theme_color: "#7A1F36"
