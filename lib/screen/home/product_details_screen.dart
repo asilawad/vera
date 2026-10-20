@@ -105,7 +105,7 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
         reviewsLoading: _detailsController.isLoading.value,
         reviewsController: _detailsController,
         quantity: _quantity,
-        isSubmitting: _cartController.isSubmitting.value,
+        cartController: _cartController,
         imageIndex: _imageIndex,
         selectedSize: _size,
         selectedColor: _color,

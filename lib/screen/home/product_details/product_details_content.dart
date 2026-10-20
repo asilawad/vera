@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:souqna_anaqa/getx_controller/product_details_getx_controller.dart';
+import 'package:souqna_anaqa/getx_controller/cart_getx_controller.dart';
 import 'package:souqna_anaqa/models/product.dart';
 import 'package:souqna_anaqa/models/review.dart';
 import 'package:souqna_anaqa/screen/home/product_details/product_details_info.dart';
@@ -22,7 +23,7 @@ class ProductDetailsContent extends StatelessWidget {
     required this.reviewsLoading,
     required this.reviewsController,
     required this.quantity,
-    required this.isSubmitting,
+    required this.cartController,
     required this.imageIndex,
     required this.selectedSize,
     required this.selectedColor,
@@ -41,7 +42,7 @@ class ProductDetailsContent extends StatelessWidget {
   final bool reviewsLoading;
   final ProductDetailsGetxController reviewsController;
   final int quantity;
-  final bool isSubmitting;
+  final CartGetxController cartController;
   final int imageIndex;
   final String? selectedSize;
   final String? selectedColor;
@@ -69,12 +70,14 @@ class ProductDetailsContent extends StatelessWidget {
       onSizeSelected: onSizeSelected,
       onColorSelected: onColorSelected,
     );
-    final bottomBar = ProductBottomBar(
-      product: product,
-      quantity: quantity,
-      onQuantityChanged: onQuantityChanged,
-      isSubmitting: isSubmitting,
-      onAddToCart: onAddToCart,
+    final bottomBar = Obx(
+      () => ProductBottomBar(
+        product: product,
+        quantity: quantity,
+        onQuantityChanged: onQuantityChanged,
+        isSubmitting: cartController.isSubmitting.value,
+        onAddToCart: onAddToCart,
+      ),
     );
 
     if (screenSize.width >= AppSizes.twoPaneWidth) {
