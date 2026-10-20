@@ -1,4 +1,5 @@
 import 'package:souqna_anaqa/models/product.dart';
+import 'package:souqna_anaqa/utils/helpers.dart';
 
 class Review {
   int id = 0;
@@ -18,14 +19,14 @@ class Review {
   });
 
   Review.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    rating = json['rating'] ?? 0;
-    comment = json['comment'];
-    if (json['customer'] != null) {
-      customerName = json['customer']['name'] ?? 'عميل';
-      initials = json['customer']['initials'] ?? '';
+    id = intFromJson(json['id']);
+    rating = intFromJson(json['rating']);
+    comment = json['comment']?.toString();
+    if (json['customer'] != null && json['customer'] is Map) {
+      customerName = json['customer']['name']?.toString() ?? 'عميل';
+      initials = json['customer']['initials']?.toString() ?? '';
     }
-    createdAt = json['created_at'] ?? '';
+    createdAt = json['created_at']?.toString() ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -53,19 +54,21 @@ class ReviewsSummary {
   });
 
   ReviewsSummary.fromJson(Map<String, dynamic> json) {
-    average = (json['average'] as num? ?? 0).toDouble();
-    count = json['count'] ?? 0;
+    average = numFromJson(json['average']);
+    count = intFromJson(json['count']);
     if (json['distribution'] is Map) {
       distribution = <int, int>{};
       json['distribution'].forEach((k, v) {
-        distribution[int.parse(k.toString())] = v;
+        distribution[intFromJson(k)] = intFromJson(v);
       });
     }
-    if (json['latest'] != null) {
+    if (json['latest'] != null && json['latest'] is List) {
       latest = <Review>[];
-      json['latest'].forEach((v) {
-        latest.add(Review.fromJson(v));
-      });
+      for (final item in json['latest']) {
+        if (item is Map) {
+          latest.add(Review.fromJson(Map<String, dynamic>.from(item as Map)));
+        }
+      }
     }
   }
 }

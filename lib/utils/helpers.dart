@@ -3,6 +3,51 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 
+double numFromJson(dynamic value, [double fallback = 0]) {
+  if (value == null) return fallback;
+  if (value is num) return value.toDouble();
+  if (value is String) {
+    final normalized = value
+        .replaceAll(RegExp(r'[^0-9.\-]'), '')
+        .replaceAll(RegExp(r',(?=\d{3}(?:\D|\Z))'), '');
+    if (normalized.isEmpty || normalized == '-' || normalized == '.') {
+      return fallback;
+    }
+    return double.tryParse(normalized) ?? fallback;
+  }
+  return fallback;
+}
+
+int intFromJson(dynamic value, [int fallback = 0]) {
+  if (value == null) return fallback;
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  if (value is String) {
+    final normalized = value
+        .replaceAll(RegExp(r'[^0-9\-]'), '')
+        .replaceAll(RegExp(r',(?=\d{3}(?:\D|\Z))'), '');
+    if (normalized.isEmpty || normalized == '-') return fallback;
+    return int.tryParse(normalized) ?? fallback;
+  }
+  return fallback;
+}
+
+bool boolFromJson(dynamic value, [bool fallback = false]) {
+  if (value == null) return fallback;
+  if (value is bool) return value;
+  if (value is num) return value != 0;
+  if (value is String) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized == 'true' || normalized == '1' || normalized == 'yes') {
+      return true;
+    }
+    if (normalized == 'false' || normalized == '0' || normalized == 'no') {
+      return false;
+    }
+  }
+  return fallback;
+}
+
 class Helpers {
   static void showSnackBar({required String message, bool error = false}) {
     final context = Get.context;

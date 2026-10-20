@@ -1,3 +1,5 @@
+import 'package:souqna_anaqa/utils/helpers.dart';
+
 class OrdersResponse {
   bool? success;
   String? message;
@@ -156,35 +158,41 @@ class Order {
   });
 
   Order.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    number = json['number'] ?? '';
-    status = json['status'] ?? '';
-    statusLabel = json['status_label'] ?? '';
-    subtotal = (json['subtotal'] as num? ?? 0).toDouble();
-    discount = (json['discount'] as num? ?? 0).toDouble();
-    deliveryFee = (json['delivery_fee'] as num? ?? 0).toDouble();
-    total = (json['total'] as num? ?? 0).toDouble();
-    couponCode = json['coupon_code'];
-    paymentLabel = json['payment_method_label'] ?? '';
-    customerName = json['customer_name'] ?? '';
-    phone = json['phone'] ?? '';
-    address = json['address'] ?? '';
-    notes = json['notes'];
-    canCancel = json['can_cancel'] ?? false;
-    itemsCount = json['items_count'] ?? 0;
-    if (json['items'] != null) {
+    id = intFromJson(json['id']);
+    number = json['number']?.toString() ?? '';
+    status = json['status']?.toString() ?? '';
+    statusLabel = json['status_label']?.toString() ?? '';
+    subtotal = numFromJson(json['subtotal']);
+    discount = numFromJson(json['discount']);
+    deliveryFee = numFromJson(json['delivery_fee']);
+    total = numFromJson(json['total'], subtotal - discount + deliveryFee);
+    couponCode = json['coupon_code']?.toString();
+    paymentLabel = json['payment_method_label']?.toString() ?? '';
+    customerName = json['customer_name']?.toString() ?? '';
+    phone = json['phone']?.toString() ?? '';
+    address = json['address']?.toString() ?? '';
+    notes = json['notes']?.toString();
+    canCancel = boolFromJson(json['can_cancel']);
+    itemsCount = intFromJson(json['items_count']);
+    if (json['items'] != null && json['items'] is List) {
       items = <OrderLine>[];
-      json['items'].forEach((v) {
-        items.add(OrderLine.fromJson(v));
-      });
+      for (final item in json['items']) {
+        if (item is Map) {
+          items.add(OrderLine.fromJson(Map<String, dynamic>.from(item as Map)));
+        }
+      }
     }
-    if (json['timeline'] != null) {
+    if (json['timeline'] != null && json['timeline'] is List) {
       timeline = <TimelineStep>[];
-      json['timeline'].forEach((v) {
-        timeline.add(TimelineStep.fromJson(v));
-      });
+      for (final step in json['timeline']) {
+        if (step is Map) {
+          timeline.add(
+            TimelineStep.fromJson(Map<String, dynamic>.from(step as Map)),
+          );
+        }
+      }
     }
-    createdAt = json['created_at'] ?? '';
+    createdAt = json['created_at']?.toString() ?? '';
   }
 
   Map<String, dynamic> toJson() {

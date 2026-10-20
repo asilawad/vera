@@ -1,3 +1,5 @@
+import 'package:souqna_anaqa/utils/helpers.dart';
+
 class ProductsResponse {
   bool? success;
   String? message;
@@ -132,41 +134,54 @@ class Product {
       List<String>.from(attributes['colors'] ?? const []);
 
   Product.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'] ?? '';
-    description = json['description'];
-    price = (json['price'] as num? ?? 0).toDouble();
-    salePrice = (json['sale_price'] as num?)?.toDouble();
-    finalPrice = (json['final_price'] as num? ?? 0).toDouble();
-    discountPercent = json['discount_percent'];
-    stock = json['stock'] ?? 0;
-    image = json['image'];
-    thumb = json['thumb'];
-    if (json['images'] != null) {
+    id = intFromJson(json['id']);
+    name = json['name']?.toString() ?? '';
+    description = json['description']?.toString();
+    price = numFromJson(json['price']);
+    salePrice = json['sale_price'] == null
+        ? null
+        : numFromJson(json['sale_price']);
+    finalPrice = numFromJson(json['final_price'], price);
+    discountPercent = json['discount_percent'] == null
+        ? null
+        : intFromJson(json['discount_percent']);
+    stock = intFromJson(json['stock']);
+    image = json['image']?.toString();
+    thumb = json['thumb']?.toString();
+    if (json['images'] != null && json['images'] is List) {
       images = <String>[];
-      json['images'].forEach((v) {
-        images.add(v['url']);
-      });
+      for (final item in json['images']) {
+        if (item is Map && item['url'] != null) {
+          images.add(item['url'].toString());
+        }
+      }
     }
     if (json['attributes'] is Map) {
       attributes = Map<String, dynamic>.from(json['attributes']);
     }
-    if (json['attributes_display'] != null) {
+    if (json['attributes_display'] != null &&
+        json['attributes_display'] is List) {
       attributesDisplay = <AttributeRow>[];
-      json['attributes_display'].forEach((v) {
-        attributesDisplay.add(AttributeRow.fromJson(v));
-      });
+      for (final item in json['attributes_display']) {
+        if (item is Map) {
+          attributesDisplay.add(
+            AttributeRow.fromJson(Map<String, dynamic>.from(item as Map)),
+          );
+        }
+      }
     }
-    categoryId = json['category_id'];
+    categoryId = json['category_id'] == null
+        ? null
+        : intFromJson(json['category_id']);
     if (json['category'] is Map) {
-      categoryName = json['category']['name'];
+      categoryName = json['category']['name']?.toString();
     }
-    if (json['rating'] != null) {
-      ratingAverage = (json['rating']['average'] as num? ?? 0).toDouble();
-      ratingCount = json['rating']['count'] ?? 0;
+    if (json['rating'] != null && json['rating'] is Map) {
+      ratingAverage = numFromJson(json['rating']['average']);
+      ratingCount = intFromJson(json['rating']['count']);
     }
-    isFavorite = json['is_favorite'] ?? false;
-    isFeatured = json['is_featured'] ?? false;
+    isFavorite = boolFromJson(json['is_favorite']);
+    isFeatured = boolFromJson(json['is_featured']);
   }
 
   Map<String, dynamic> toJson() {

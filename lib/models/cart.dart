@@ -1,3 +1,5 @@
+import 'package:souqna_anaqa/utils/helpers.dart';
+
 class CartResponse {
   bool? success;
   String? message;
@@ -40,22 +42,22 @@ class CartItem {
   });
 
   CartItem.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    productId = json['product_id'];
-    name = json['name'] ?? '';
-    image = json['image'];
-    unitPrice = (json['unit_price'] as num? ?? 0).toDouble();
-    originalPrice = (json['original_price'] as num? ?? 0).toDouble();
-    quantity = json['quantity'] ?? 1;
+    id = intFromJson(json['id']);
+    productId = intFromJson(json['product_id']);
+    name = json['name']?.toString() ?? '';
+    image = json['image']?.toString();
+    unitPrice = numFromJson(json['unit_price']);
+    originalPrice = numFromJson(json['original_price'], unitPrice);
+    quantity = intFromJson(json['quantity'], 1);
     if (json['options'] is Map) {
       options = <String, String>{};
       json['options'].forEach((k, v) {
-        options[k] = v.toString();
+        options[k.toString()] = v.toString();
       });
     }
-    lineTotal = (json['line_total'] as num? ?? 0).toDouble();
-    stock = json['stock'] ?? 0;
-    isAvailable = json['is_available'] ?? true;
+    lineTotal = numFromJson(json['line_total'], unitPrice * quantity);
+    stock = intFromJson(json['stock']);
+    isAvailable = boolFromJson(json['is_available'], true);
   }
 
   Map<String, dynamic> toJson() {
@@ -104,21 +106,23 @@ class CartSummary {
   bool get isEmpty => items.isEmpty;
 
   CartSummary.fromJson(Map<String, dynamic> json) {
-    if (json['items'] != null) {
+    if (json['items'] != null && json['items'] is List) {
       items = <CartItem>[];
-      json['items'].forEach((v) {
-        items.add(CartItem.fromJson(v));
-      });
+      for (final item in json['items']) {
+        if (item is Map) {
+          items.add(CartItem.fromJson(Map<String, dynamic>.from(item as Map)));
+        }
+      }
     }
-    itemsCount = json['items_count'] ?? 0;
-    subtotal = (json['subtotal'] as num? ?? 0).toDouble();
-    discount = (json['discount'] as num? ?? 0).toDouble();
-    deliveryFee = (json['delivery_fee'] as num? ?? 0).toDouble();
-    total = (json['total'] as num? ?? 0).toDouble();
-    couponCode = json['coupon_code'];
-    couponError = json['coupon_error'];
-    minOrder = (json['min_order'] as num? ?? 0).toDouble();
-    meetsMinOrder = json['meets_min_order'] ?? true;
+    itemsCount = intFromJson(json['items_count']);
+    subtotal = numFromJson(json['subtotal']);
+    discount = numFromJson(json['discount']);
+    deliveryFee = numFromJson(json['delivery_fee']);
+    total = numFromJson(json['total'], subtotal - discount + deliveryFee);
+    couponCode = json['coupon_code']?.toString();
+    couponError = json['coupon_error']?.toString();
+    minOrder = numFromJson(json['min_order']);
+    meetsMinOrder = boolFromJson(json['meets_min_order'], true);
   }
 
   Map<String, dynamic> toJson() {

@@ -50,25 +50,25 @@ class StoreInfo {
   });
 
   StoreInfo.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'] ?? '';
-    slug = json['slug'] ?? '';
-    tagline = json['tagline'];
-    description = json['description'];
-    logo = json['logo'];
-    cover = json['cover'];
-    if (json['theme'] != null) {
-      primaryColor = Fmt.hex(json['theme']['primary_color']);
+    id = intFromJson(json['id']);
+    name = json['name']?.toString() ?? '';
+    slug = json['slug']?.toString() ?? '';
+    tagline = json['tagline']?.toString();
+    description = json['description']?.toString();
+    logo = json['logo']?.toString();
+    cover = json['cover']?.toString();
+    if (json['theme'] != null && json['theme'] is Map) {
+      primaryColor = Fmt.hex(json['theme']['primary_color']?.toString());
     }
-    if (json['contact'] != null) {
-      phone = json['contact']['phone'];
-      whatsapp = json['contact']['whatsapp'];
-      address = json['contact']['address'];
+    if (json['contact'] != null && json['contact'] is Map) {
+      phone = json['contact']['phone']?.toString();
+      whatsapp = json['contact']['whatsapp']?.toString();
+      address = json['contact']['address']?.toString();
     }
-    if (json['delivery'] != null) {
-      deliveryFee = (json['delivery']['fee'] as num? ?? 0).toDouble();
-      minOrder = (json['delivery']['min_order'] as num? ?? 0).toDouble();
+    if (json['delivery'] != null && json['delivery'] is Map) {
+      deliveryFee = numFromJson(json['delivery']['fee']);
+      minOrder = numFromJson(json['delivery']['min_order']);
     }
-    currencySymbol = json['currency_symbol'] ?? '₪';
+    currencySymbol = json['currency_symbol']?.toString() ?? '₪';
   }
 }
