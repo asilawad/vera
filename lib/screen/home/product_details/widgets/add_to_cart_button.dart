@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
+
 class AddToCartButton extends StatelessWidget {
   const AddToCartButton({
     super.key,
@@ -17,12 +20,12 @@ class AddToCartButton extends StatelessWidget {
     return FilledButton.icon(
       onPressed: isSubmitting ? null : onPressed,
       icon: isSubmitting
-          ? const SizedBox(
-              width: 18,
-              height: 18,
+          ? SizedBox(
+              width: AppSizes.cartSpinner,
+              height: AppSizes.cartSpinner,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white,
+                color: AppColors.white,
               ),
             )
           : const Icon(Icons.shopping_bag_outlined),

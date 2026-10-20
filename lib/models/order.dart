@@ -178,7 +178,7 @@ class Order {
       items = <OrderLine>[];
       for (final item in json['items']) {
         if (item is Map) {
-          items.add(OrderLine.fromJson(Map<String, dynamic>.from(item as Map)));
+          items.add(OrderLine.fromJson(Map<String, dynamic>.from(item)));
         }
       }
     }
@@ -186,9 +186,7 @@ class Order {
       timeline = <TimelineStep>[];
       for (final step in json['timeline']) {
         if (step is Map) {
-          timeline.add(
-            TimelineStep.fromJson(Map<String, dynamic>.from(step as Map)),
-          );
+          timeline.add(TimelineStep.fromJson(Map<String, dynamic>.from(step)));
         }
       }
     }

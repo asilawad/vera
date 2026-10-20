@@ -20,6 +20,10 @@ class AppColors {
   static const Color ink = Color(0xFF1C1416);
   static const Color paper = AppBrand.cream;
   static const Color surface = Colors.white;
+  static const Color white = Colors.white;
+  static const Color whiteMuted = Color(0x8AFFFFFF);
+  static const Color transparent = Colors.transparent;
+  static const Color shadow = Color(0x14000000);
   static const Color sand = Color(0xFFF3EBE4);
   static const Color line = Color(0xFFE7DDD3);
   static const Color muted = Color(0xFF6F6368);
@@ -27,6 +31,7 @@ class AppColors {
   static const Color success = Color(0xFF2F7D5B);
   static const Color danger = Color(0xFFC62828);
   static const Color warning = Color(0xFFD9822B);
+  static const Color dangerSurface = Color(0x1AC62828);
 }
 
 class AppTheme {

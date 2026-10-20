@@ -165,7 +165,7 @@ class Product {
       for (final item in json['attributes_display']) {
         if (item is Map) {
           attributesDisplay.add(
-            AttributeRow.fromJson(Map<String, dynamic>.from(item as Map)),
+            AttributeRow.fromJson(Map<String, dynamic>.from(item)),
           );
         }
       }

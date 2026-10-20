@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:souqna_anaqa/models/product.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/widget/product_card.dart';
 import 'package:souqna_anaqa/widget/product_grid.dart';
@@ -22,15 +22,17 @@ class ProductRelatedSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 26),
+        SizedBox(height: AppSpacing.xxl),
         Text(
           AppStrings.recommendations,
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.sp),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
         ),
-        const SizedBox(height: 14),
+        SizedBox(height: AppSpacing.md),
         HorizontalProducts(
           padding: EdgeInsets.zero,
-          itemWidth: 160.w,
+          itemWidth: AppSizes.relatedProductWidth,
           itemCount: products.length,
           itemBuilder: (_, index) =>
               ProductCard(products[index], heroPrefix: heroPrefix),

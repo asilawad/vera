@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
 
 class ProductGallery extends StatelessWidget {
@@ -29,7 +31,7 @@ class ProductGallery extends StatelessWidget {
         ),
         if (images.length > 1)
           Positioned(
-            bottom: 18,
+            bottom: AppSpacing.lg,
             left: 0,
             right: 0,
             child: Row(
@@ -38,12 +40,18 @@ class ProductGallery extends StatelessWidget {
                 images.length,
                 (i) => AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  width: i == imageIndex ? 20 : 7,
-                  height: 7,
+                  margin: EdgeInsetsDirectional.symmetric(
+                    horizontal: AppSpacing.micro,
+                  ),
+                  width: i == imageIndex
+                      ? AppSizes.galleryIndicatorActiveWidth
+                      : AppSizes.galleryIndicatorWidth,
+                  height: AppSizes.galleryIndicatorHeight,
                   decoration: BoxDecoration(
-                    color: i == imageIndex ? Colors.white : Colors.white54,
-                    borderRadius: BorderRadius.circular(6),
+                    color: i == imageIndex
+                        ? AppColors.white
+                        : AppColors.whiteMuted,
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                 ),
               ),

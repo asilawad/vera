@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:souqna_anaqa/models/product.dart';
 import 'package:souqna_anaqa/screen/home/product_details/widgets/add_to_cart_button.dart';
+import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/app_dimens.dart';
+import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/widget/quantity_stepper.dart';
@@ -26,19 +28,19 @@ class ProductBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        14,
-        20,
-        14 + MediaQuery.paddingOf(context).bottom,
+      padding: EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.page,
+        AppSpacing.barVertical,
+        AppSpacing.page,
+        AppSpacing.barVertical + MediaQuery.paddingOf(context).bottom,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 20,
-            offset: Offset(0, -4),
+            color: AppColors.shadow,
+            blurRadius: AppSizes.bottomBarShadowBlur,
+            offset: Offset(0, -AppSpacing.xs),
           ),
         ],
       ),
@@ -47,8 +49,10 @@ class ProductBottomBar extends StatelessWidget {
         child: product.inStock
             ? LayoutBuilder(
                 builder: (context, constraints) {
-                  final label =
-                      'أضيفي للسلة · ${Fmt.money(product.finalPrice * quantity)}';
+                  final label = AppStrings.addToCartPrice.replaceAll(
+                    '{price}',
+                    Fmt.money(product.finalPrice * quantity),
+                  );
                   final stepper = QuantityStepper(
                     value: quantity,
                     max: product.stock,
@@ -62,19 +66,26 @@ class ProductBottomBar extends StatelessWidget {
                   if (!_labelFits(context, label, constraints.maxWidth)) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [stepper, const SizedBox(height: 10), button],
+                      children: [
+                        stepper,
+                        SizedBox(height: AppSpacing.compact),
+                        button,
+                      ],
                     );
                   }
                   return Row(
                     children: [
                       stepper,
-                      const SizedBox(width: 12),
+                      SizedBox(width: AppSpacing.md),
                       Expanded(child: button),
                     ],
                   );
                 },
               )
-            : const FilledButton(onPressed: null, child: Text('نفدت الكمية')),
+            : const FilledButton(
+                onPressed: null,
+                child: Text(AppStrings.outOfStock),
+              ),
       ),
     );
   }

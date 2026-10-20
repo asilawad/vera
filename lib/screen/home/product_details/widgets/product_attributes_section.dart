@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:souqna_anaqa/models/product.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 
 class ProductAttributesSection extends StatelessWidget {
@@ -16,25 +16,27 @@ class ProductAttributesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 22),
+        SizedBox(height: AppSpacing.xl),
         Text(
           AppStrings.productDetails,
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.sp),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: AppSpacing.compact),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(color: AppColors.line),
           ),
           child: Column(
             children: attributes
                 .map(
                   (attribute) => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    padding: EdgeInsetsDirectional.symmetric(
+                      horizontal: AppSpacing.lg,
+                      vertical: AppSpacing.md,
                     ),
                     child: Row(
                       children: [

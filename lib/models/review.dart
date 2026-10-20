@@ -66,7 +66,7 @@ class ReviewsSummary {
       latest = <Review>[];
       for (final item in json['latest']) {
         if (item is Map) {
-          latest.add(Review.fromJson(Map<String, dynamic>.from(item as Map)));
+          latest.add(Review.fromJson(Map<String, dynamic>.from(item)));
         }
       }
     }

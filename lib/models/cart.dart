@@ -110,7 +110,7 @@ class CartSummary {
       items = <CartItem>[];
       for (final item in json['items']) {
         if (item is Map) {
-          items.add(CartItem.fromJson(Map<String, dynamic>.from(item as Map)));
+          items.add(CartItem.fromJson(Map<String, dynamic>.from(item)));
         }
       }
     }

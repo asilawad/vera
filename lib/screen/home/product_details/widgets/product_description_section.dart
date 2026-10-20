@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 
 class ProductDescriptionSection extends StatelessWidget {
@@ -14,19 +14,19 @@ class ProductDescriptionSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 24),
+        SizedBox(height: AppSpacing.xl),
         Text(
           AppStrings.description,
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.sp),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: AppSpacing.sm),
         Text(
           description,
-          style: TextStyle(
-            color: AppColors.muted,
-            height: 1.8,
-            fontSize: 14.5.sp,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: AppColors.muted, height: 1.8),
         ),
       ],
     );

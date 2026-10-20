@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
 
@@ -30,28 +30,34 @@ class ProductOptionsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (sizes.isNotEmpty) ...[
-          const SizedBox(height: 24),
+          SizedBox(height: AppSpacing.xl),
           Text(
             AppStrings.size,
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.sp),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: AppSpacing.compact),
           Wrap(
-            spacing: 10,
-            runSpacing: 10,
+            spacing: AppSpacing.compact,
+            runSpacing: AppSpacing.compact,
             children: sizes.map((size) {
               final active = selectedSize == size;
               return GestureDetector(
                 onTap: () => onSizeSelected(size),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  constraints: const BoxConstraints(minWidth: 52),
-                  height: 46,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  constraints: BoxConstraints(
+                    minWidth: AppSizes.sizeOptionMinWidth,
+                  ),
+                  height: AppSizes.sizeOptionHeight,
+                  padding: EdgeInsetsDirectional.symmetric(
+                    horizontal: AppSpacing.md,
+                  ),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: active ? AppColors.ink : Colors.white,
-                    borderRadius: BorderRadius.circular(14),
+                    color: active ? AppColors.ink : AppColors.white,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
                     border: Border.all(
                       color: active ? AppColors.ink : AppColors.line,
                     ),
@@ -60,7 +66,7 @@ class ProductOptionsSection extends StatelessWidget {
                     size,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: active ? Colors.white : AppColors.ink,
+                      color: active ? AppColors.white : AppColors.ink,
                     ),
                   ),
                 ),
@@ -69,28 +75,30 @@ class ProductOptionsSection extends StatelessWidget {
           ),
         ],
         if (colors.isNotEmpty) ...[
-          const SizedBox(height: 22),
+          SizedBox(height: AppSpacing.xl),
           Text(
             AppStrings.color,
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.sp),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: AppSpacing.compact),
           Wrap(
-            spacing: 12,
+            spacing: AppSpacing.md,
             children: colors.map((color) {
               final active = selectedColor == color;
               return GestureDetector(
                 onTap: () => onColorSelected(color),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: 42,
-                  height: 42,
-                  padding: const EdgeInsets.all(3),
+                  width: AppSizes.colorSwatch,
+                  height: AppSizes.colorSwatch,
+                  padding: EdgeInsetsDirectional.all(AppSpacing.xs),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: active ? primary : Colors.transparent,
-                      width: 2,
+                      color: active ? primary : AppColors.transparent,
+                      width: AppSizes.borderWidth,
                     ),
                   ),
                   child: Container(
@@ -102,10 +110,10 @@ class ProductOptionsSection extends StatelessWidget {
                     child: active
                         ? Icon(
                             Icons.check_rounded,
-                            size: 18,
+                            size: AppSizes.compactIcon,
                             color: Fmt.hex(color).computeLuminance() > 0.5
                                 ? AppColors.ink
-                                : Colors.white,
+                                : AppColors.white,
                           )
                         : null,
                   ),
