@@ -110,17 +110,11 @@ class _CartItemCountLabel extends StatelessWidget {
 }
 
 class _SummaryMoney extends StatelessWidget {
-  const _SummaryMoney({
-    required this.amount,
-    this.prefix = '',
-    this.color,
-    this.bold = false,
-  });
+  const _SummaryMoney({required this.amount, this.prefix = '', this.color});
 
   final RxDouble amount;
   final String prefix;
   final Color? color;
-  final bool bold;
 
   @override
   Widget build(BuildContext context) {
@@ -129,8 +123,8 @@ class _SummaryMoney extends StatelessWidget {
         '$prefix${Fmt.money(amount.value)}',
         style: TextStyle(
           color: color ?? AppColors.ink,
-          fontWeight: bold ? FontWeight.w700 : FontWeight.w600,
-          fontSize: (bold ? 17 : 14).sp,
+          fontWeight: FontWeight.w600,
+          fontSize: 14.sp,
         ),
       ),
     );

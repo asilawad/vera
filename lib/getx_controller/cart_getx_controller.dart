@@ -34,18 +34,18 @@ class CartGetxController extends GetxController {
   Future<void> fetchCart() async {
     if (UserGetStorage().getToken().isEmpty) return;
     isLoading.value = true;
-    this._refreshDisplayState();
+    _refreshDisplayState();
     errorMessage.value = '';
     try {
       switch (await _repository.fetch()) {
         case CartSuccess(:final summary):
-          this._apply(summary);
+          _apply(summary);
         case CartFailure(:final message):
           errorMessage.value = message;
       }
     } finally {
       isLoading.value = false;
-      this._refreshDisplayState();
+      _refreshDisplayState();
     }
   }
 
@@ -56,7 +56,7 @@ class CartGetxController extends GetxController {
   }) async {
     isSubmitting.value = true;
     try {
-      return this._handle(
+      return _handle(
         await _repository.add(
           productId: productId,
           quantity: quantity,
@@ -73,7 +73,7 @@ class CartGetxController extends GetxController {
     if (quantity < 1) return removeItem(item);
     busyItemId.value = item.id;
     try {
-      this._handle(await _repository.updateQuantity(item.id, quantity));
+      _handle(await _repository.updateQuantity(item.id, quantity));
     } finally {
       busyItemId.value = null;
     }
@@ -82,7 +82,7 @@ class CartGetxController extends GetxController {
   Future<void> removeItem(CartItem item) async {
     busyItemId.value = item.id;
     try {
-      if (!this._handle(await _repository.remove(item.id))) fetchCart();
+      if (!_handle(await _repository.remove(item.id))) fetchCart();
     } finally {
       busyItemId.value = null;
     }
@@ -92,7 +92,7 @@ class CartGetxController extends GetxController {
     if (code.trim().isEmpty) return false;
     isSubmitting.value = true;
     try {
-      return this._handle(
+      return _handle(
         await _repository.applyCoupon(code.trim()),
         successMessage: AppStrings.cartCouponApplied,
       );
