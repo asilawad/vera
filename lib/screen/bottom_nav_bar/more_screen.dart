@@ -226,7 +226,10 @@ class _Tile extends StatelessWidget {
                 ),
           trailing: danger
               ? null
-              : const Icon(Icons.chevron_right_rounded, color: AppColors.subtle),
+              : const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.subtle,
+                ),
         ),
       ),
     );

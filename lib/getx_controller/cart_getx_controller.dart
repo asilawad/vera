@@ -34,7 +34,7 @@ class CartGetxController extends GetxController {
           .get(
             Uri.parse(ApiSettings.cart),
             headers: {
-              'Accept': 'application/json', 
+              'Accept': 'application/json',
               'Accept-Language': 'ar',
               'Authorization': 'Bearer $token',
             },
