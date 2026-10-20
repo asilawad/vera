@@ -9,17 +9,17 @@ import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/models/product.dart';
-import 'package:souqna_anaqa/models/review.dart';
 import 'package:souqna_anaqa/widget/favorite_icon.dart';
-import 'package:souqna_anaqa/widget/price.dart';
-import 'package:souqna_anaqa/widget/product_card.dart';
-import 'package:souqna_anaqa/widget/product_grid.dart';
-import 'package:souqna_anaqa/widget/review_card.dart';
 import 'package:souqna_anaqa/widget/states.dart';
 import 'package:souqna_anaqa/screen/bottom_nav_bar/main_screen.dart';
+import 'package:souqna_anaqa/screen/home/product_details/widgets/product_attributes_section.dart';
 import 'package:souqna_anaqa/screen/home/product_details/widgets/product_bottom_bar.dart';
+import 'package:souqna_anaqa/screen/home/product_details/widgets/product_description_section.dart';
 import 'package:souqna_anaqa/screen/home/product_details/widgets/product_gallery.dart';
-import 'package:souqna_anaqa/screen/home/reviews_screen.dart';
+import 'package:souqna_anaqa/screen/home/product_details/widgets/product_header_section.dart';
+import 'package:souqna_anaqa/screen/home/product_details/widgets/product_options_section.dart';
+import 'package:souqna_anaqa/screen/home/product_details/widgets/product_related_section.dart';
+import 'package:souqna_anaqa/screen/home/product_details/widgets/product_reviews_section.dart';
 
 /// تفاصيل المنتج: معرض صور، السعر، المقاس واللون، الوصف، التقييمات، ومنتجات مشابهة.
 class ProductDetailsScreen extends StatefulWidget {
@@ -239,446 +239,34 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
   Widget _info(BuildContext context, Product p) {
     final reviews = _detailsController.reviewsSummary.value;
     final related = _detailsController.relatedList;
-    final primary = Theme.of(context).colorScheme.primary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (p.categoryName != null)
-          Text(
-            p.categoryName!,
-            style: TextStyle(
-              color: primary,
-              fontWeight: FontWeight.w600,
-              fontSize: 13.sp,
-            ),
-          ),
-        const SizedBox(height: 4),
-        Text(
-          p.name,
-          style: TextStyle(
-            fontSize: 23.sp,
-            fontWeight: FontWeight.w700,
-            height: 1.35,
-          ),
+        ProductHeaderSection(product: p, reviews: reviews),
+        ProductOptionsSection(
+          sizes: p.sizes,
+          colors: p.colors,
+          selectedSize: _size,
+          selectedColor: _color,
+          onSizeSelected: (size) => setState(() => _size = size),
+          onColorSelected: (color) => setState(() => _color = color),
         ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(child: PriceView(p, size: 22)),
-            if (p.discountPercent != null)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.danger.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  'خصم ${p.discountPercent}%',
-                  style: TextStyle(
-                    color: AppColors.danger,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
-                  ),
-                ),
-              ),
-          ],
+        if (p.description != null)
+          ProductDescriptionSection(description: p.description!),
+        ProductAttributesSection(
+          attributes: p.attributesDisplay
+              .where((a) => a.type != 'color' && a.key != 'sizes')
+              .toList(),
         ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            if (reviews != null && reviews.count > 0) ...[
-              Stars(reviews.average),
-              const SizedBox(width: 6),
-              Text(
-                '${reviews.average.toStringAsFixed(1)} (${reviews.count} تقييم)',
-                style: TextStyle(color: AppColors.muted, fontSize: 13.sp),
-              ),
-              const SizedBox(width: 14),
-            ],
-            Icon(
-              p.inStock ? Icons.check_circle_rounded : Icons.cancel_rounded,
-              size: 16,
-              color: p.inStock ? AppColors.success : AppColors.danger,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              !p.inStock
-                  ? 'نفدت الكمية'
-                  : (p.stock <= 5 ? 'باقي ${p.stock} فقط!' : 'متوفر'),
-              style: TextStyle(
-                color: p.inStock
-                    ? (p.stock <= 5 ? AppColors.warning : AppColors.success)
-                    : AppColors.danger,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        if (p.sizes.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          Text(
-            'المقاس',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.sp),
-          ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: p.sizes.map((s) {
-              final active = _size == s;
-              return GestureDetector(
-                onTap: () => setState(() => _size = s),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  constraints: const BoxConstraints(minWidth: 52),
-                  height: 46,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: active ? AppColors.ink : Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: active ? AppColors.ink : AppColors.line,
-                    ),
-                  ),
-                  child: Text(
-                    s,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: active ? Colors.white : AppColors.ink,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-        if (p.colors.isNotEmpty) ...[
-          const SizedBox(height: 22),
-          Text(
-            'اللون',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.sp),
-          ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 12,
-            children: p.colors.map((c) {
-              final active = _color == c;
-              return GestureDetector(
-                onTap: () => setState(() => _color = c),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 42,
-                  height: 42,
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: active ? primary : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Fmt.hex(c),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.line),
-                    ),
-                    child: active
-                        ? Icon(
-                            Icons.check_rounded,
-                            size: 18,
-                            color: Fmt.hex(c).computeLuminance() > 0.5
-                                ? AppColors.ink
-                                : Colors.white,
-                          )
-                        : null,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-        if (p.description != null) ...[
-          const SizedBox(height: 24),
-          Text(
-            'الوصف',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.sp),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            p.description!,
-            style: TextStyle(
-              color: AppColors.muted,
-              height: 1.8,
-              fontSize: 14.5.sp,
-            ),
-          ),
-        ],
-        if (p.attributesDisplay
-            .where((a) => a.type != 'color' && a.key != 'sizes')
-            .isNotEmpty) ...[
-          const SizedBox(height: 22),
-          Text(
-            'تفاصيل المنتج',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.sp),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.line),
-            ),
-            child: Column(
-              children: p.attributesDisplay
-                  .where((a) => a.type != 'color' && a.key != 'sizes')
-                  .map(
-                    (a) => Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              a.label,
-                              style: const TextStyle(color: AppColors.muted),
-                            ),
-                          ),
-                          Text(
-                            a.display,
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-        ],
         const SizedBox(height: 24),
-        _ReviewsSection(
+        ProductReviewsSection(
           productId: p.id,
           summary: reviews,
           loading: _detailsController.isLoading.value,
           controller: _detailsController,
         ),
-        if (related.isNotEmpty) ...[
-          const SizedBox(height: 26),
-          Text(
-            'قد يعجبك أيضًا',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.sp),
-          ),
-          const SizedBox(height: 14),
-          HorizontalProducts(
-            padding: EdgeInsets.zero,
-            itemWidth: 160.w,
-            itemCount: related.length,
-            itemBuilder: (_, i) =>
-                ProductCard(related[i], heroPrefix: 'rel$_id'),
-          ),
-        ],
+        ProductRelatedSection(products: related, heroPrefix: 'rel$_id'),
       ],
     );
-  }
-}
-
-class _ReviewsSection extends StatelessWidget {
-  const _ReviewsSection({
-    required this.productId,
-    required this.summary,
-    required this.loading,
-    required this.controller,
-  });
-
-  final int productId;
-  final ReviewsSummary? summary;
-  final bool loading;
-  final ProductDetailsGetxController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = summary;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'آراء العميلات',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.sp),
-              ),
-            ),
-            TextButton.icon(
-              onPressed: () => _openAddReview(context),
-              icon: const Icon(Icons.rate_review_outlined, size: 18),
-              label: const Text('أضيفي تقييمك'),
-            ),
-          ],
-        ),
-        if (s == null || s.count == 0)
-          Text(
-            loading
-                ? '…'
-                : 'لا توجد تقييمات بعد — كوني أول من يقيّم هذا المنتج.',
-            style: const TextStyle(color: AppColors.muted),
-          )
-        else ...[
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.line),
-            ),
-            child: Row(
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      s.average.toStringAsFixed(1),
-                      style: TextStyle(
-                        fontSize: 34.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Stars(s.average),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${s.count} تقييم',
-                      style: TextStyle(color: AppColors.muted, fontSize: 12.sp),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    children: [5, 4, 3, 2, 1].map((r) {
-                      final n = s.distribution[r] ?? 0;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Row(
-                          children: [
-                            Text('$r', style: TextStyle(fontSize: 12.sp)),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: LinearProgressIndicator(
-                                  value: s.count == 0 ? 0 : n / s.count,
-                                  minHeight: 6,
-                                  backgroundColor: AppColors.sand,
-                                  color: const Color(0xFFF5A623),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          ...s.latest.map(ReviewCard.new),
-          if (s.count > s.latest.length)
-            Center(
-              child: OutlinedButton.icon(
-                onPressed: () =>
-                    Get.to(() => ReviewsScreen(productId: productId)),
-                icon: const Icon(Icons.reviews_outlined, size: 18),
-                label: Text('عرض كل التقييمات (${s.count})'),
-              ),
-            ),
-        ],
-      ],
-    );
-  }
-
-  Future<void> _openAddReview(BuildContext context) async {
-    final UserProfileGetxController profile = Get.find();
-    if (!await profile.ensureLoggedIn()) return;
-    int rating = 5;
-    final comment = TextEditingController();
-    await Get.bottomSheet(
-      StatefulBuilder(
-        builder: (context, setState) => Container(
-          padding: EdgeInsets.fromLTRB(
-            20,
-            20,
-            20,
-            20 + MediaQuery.viewInsetsOf(context).bottom,
-          ),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
-          ),
-          // قابلة للتمرير: مع لوحة المفاتيح في الوضع الأفقي لا يتسع المحتوى.
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'قيّمي المنتج',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    5,
-                    (i) => IconButton(
-                      onPressed: () => setState(() => rating = i + 1),
-                      icon: Icon(
-                        i < rating
-                            ? Icons.star_rounded
-                            : Icons.star_outline_rounded,
-                        size: 38,
-                        color: const Color(0xFFF5A623),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: comment,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    hintText: 'شاركينا رأيك (اختياري)',
-                  ),
-                ),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: () async {
-                    Get.back();
-                    await controller.addReview(
-                      productId: productId,
-                      rating: rating,
-                      comment: comment.text,
-                    );
-                  },
-                  child: const Text('إرسال التقييم'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      isScrollControlled: true,
-    );
-    comment.dispose();
   }
 }
