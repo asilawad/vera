@@ -29,4 +29,8 @@ class AppSizes {
   static const tabletBreakpoint = 600.0;
   static const twoPaneWidth = 840.0;
   static const desktopBreakpoint = 1024.0;
+
+  /// Reserved width beside the cart label: stepper (40 + 34 + 40),
+  /// row gap (12), button padding (16 + 24), icon (18), and icon-label gap (8).
+  static const addToCartLabelReservedWidth = 114 + 12 + 16 + 24 + 18 + 8;
 }

@@ -14,10 +14,10 @@ import 'package:souqna_anaqa/widget/favorite_icon.dart';
 import 'package:souqna_anaqa/widget/price.dart';
 import 'package:souqna_anaqa/widget/product_card.dart';
 import 'package:souqna_anaqa/widget/product_grid.dart';
-import 'package:souqna_anaqa/widget/quantity_stepper.dart';
 import 'package:souqna_anaqa/widget/review_card.dart';
 import 'package:souqna_anaqa/widget/states.dart';
 import 'package:souqna_anaqa/screen/bottom_nav_bar/main_screen.dart';
+import 'package:souqna_anaqa/screen/home/product_details/widgets/product_bottom_bar.dart';
 import 'package:souqna_anaqa/screen/home/product_details/widgets/product_gallery.dart';
 import 'package:souqna_anaqa/screen/home/reviews_screen.dart';
 
@@ -171,7 +171,13 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
             ],
           ),
         ),
-        bottomSheet: _bottomBar(context, p),
+        bottomSheet: ProductBottomBar(
+          product: p,
+          quantity: _quantity,
+          onQuantityChanged: (q) => setState(() => _quantity = q),
+          isSubmitting: _cartController.isSubmitting.value,
+          onAddToCart: () => _addToCart(),
+        ),
       );
     }
 
@@ -218,7 +224,13 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
           ),
         ],
       ),
-      bottomSheet: _bottomBar(context, p),
+      bottomSheet: ProductBottomBar(
+        product: p,
+        quantity: _quantity,
+        onQuantityChanged: (q) => setState(() => _quantity = q),
+        isSubmitting: _cartController.isSubmitting.value,
+        onAddToCart: () => _addToCart(),
+      ),
     );
   }
 
@@ -474,96 +486,6 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
           ),
         ],
       ],
-    );
-  }
-
-  Widget _bottomBar(BuildContext context, Product p) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        14,
-        20,
-        14 + MediaQuery.paddingOf(context).bottom,
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 20,
-            offset: Offset(0, -4),
-          ),
-        ],
-      ),
-      child: MaxWidthBox(
-        maxWidth: Responsive.readingMaxWidth,
-        child: p.inStock
-            ? LayoutBuilder(
-                builder: (context, constraints) {
-                  final label =
-                      'أضيفي للسلة · ${Fmt.money(p.finalPrice * _quantity)}';
-                  final stepper = QuantityStepper(
-                    value: _quantity,
-                    max: p.stock,
-                    onChanged: (q) => setState(() => _quantity = q),
-                  );
-                  final button = _addButton(label);
-                  // إن لم يتسع النص بجانب العداد (شاشة ضيقة أو خط كبير)
-                  // نضع العداد فوق زر بعرض كامل بدل تصغير النص أو تكسيره.
-                  if (!_labelFits(context, label, constraints.maxWidth)) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [stepper, const SizedBox(height: 10), button],
-                    );
-                  }
-                  return Row(
-                    children: [
-                      stepper,
-                      const SizedBox(width: 12),
-                      Expanded(child: button),
-                    ],
-                  );
-                },
-              )
-            : const FilledButton(onPressed: null, child: Text('نفدت الكمية')),
-      ),
-    );
-  }
-
-  /// العداد (40+34+40) + الفاصل 12 + حشوة FilledButton.icon في M3 (16+24)
-  /// + الأيقونة 18 والمسافة بعدها 8.
-  static const _besideLabel = 114 + 12 + 16 + 24 + 18 + 8;
-
-  bool _labelFits(BuildContext context, String label, double maxWidth) {
-    final style = Theme.of(
-      context,
-    ).filledButtonTheme.style?.textStyle?.resolve({});
-    final painter = TextPainter(
-      text: TextSpan(text: label, style: style),
-      textDirection: TextDirection.rtl,
-      textScaler: MediaQuery.textScalerOf(context),
-      maxLines: 1,
-    )..layout();
-    final fits = painter.width <= maxWidth - _besideLabel;
-    painter.dispose();
-    return fits;
-  }
-
-  Widget _addButton(String label) {
-    return FilledButton.icon(
-      onPressed: _cartController.isSubmitting.value ? null : () => _addToCart(),
-      icon: _cartController.isSubmitting.value
-          ? const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.white,
-              ),
-            )
-          : const Icon(Icons.shopping_bag_outlined),
-      // بدون FittedBox: لا نصغّر النص؛ وإن ضاق يلتف (FilledButton.icon يضعه في Flexible).
-      label: Text(label, textAlign: TextAlign.center),
     );
   }
 }
