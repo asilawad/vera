@@ -11,7 +11,6 @@ import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/models/product.dart';
 import 'package:souqna_anaqa/models/review.dart';
 import 'package:souqna_anaqa/widget/favorite_icon.dart';
-import 'package:souqna_anaqa/widget/net_image.dart';
 import 'package:souqna_anaqa/widget/price.dart';
 import 'package:souqna_anaqa/widget/product_card.dart';
 import 'package:souqna_anaqa/widget/product_grid.dart';
@@ -19,6 +18,7 @@ import 'package:souqna_anaqa/widget/quantity_stepper.dart';
 import 'package:souqna_anaqa/widget/review_card.dart';
 import 'package:souqna_anaqa/widget/states.dart';
 import 'package:souqna_anaqa/screen/bottom_nav_bar/main_screen.dart';
+import 'package:souqna_anaqa/screen/home/product_details/widgets/product_gallery.dart';
 import 'package:souqna_anaqa/screen/home/reviews_screen.dart';
 
 /// تفاصيل المنتج: معرض صور، السعر، المقاس واللون، الوصف، التقييمات، ومنتجات مشابهة.
@@ -145,7 +145,12 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
                     aspectRatio: 1 / 1.1,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(28),
-                      child: _gallery(images),
+                      child: ProductGallery(
+                        images: images,
+                        imageIndex: _imageIndex,
+                        heroTag: _hero,
+                        onPageChanged: (i) => setState(() => _imageIndex = i),
+                      ),
                     ),
                   ),
                 ),
@@ -191,7 +196,14 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
                 child: FavoriteIcon(p, size: 40),
               ),
             ],
-            flexibleSpace: FlexibleSpaceBar(background: _gallery(images)),
+            flexibleSpace: FlexibleSpaceBar(
+              background: ProductGallery(
+                images: images,
+                imageIndex: _imageIndex,
+                heroTag: _hero,
+                onPageChanged: (i) => setState(() => _imageIndex = i),
+              ),
+            ),
           ),
           SliverToBoxAdapter(
             child: Container(
@@ -211,42 +223,6 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
   }
 
   static const _twoPaneWidth = 840.0;
-
-  Widget _gallery(List<String> images) {
-    return Stack(
-      children: [
-        PageView.builder(
-          itemCount: images.length,
-          onPageChanged: (i) => setState(() => _imageIndex = i),
-          itemBuilder: (_, i) => i == 0
-              ? Hero(tag: _hero, child: NetImage(images[i]))
-              : NetImage(images[i]),
-        ),
-        if (images.length > 1)
-          Positioned(
-            bottom: 18,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                images.length,
-                (i) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  width: i == _imageIndex ? 20 : 7,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    color: i == _imageIndex ? Colors.white : Colors.white54,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
 
   Widget _info(BuildContext context, Product p) {
     final reviews = _detailsController.reviewsSummary.value;
