@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 
 import 'package:souqna_anaqa/getx_controller/reviews_getx_controller.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/review_card.dart';
 import 'package:souqna_anaqa/widget/states.dart';
@@ -57,21 +58,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       ),
       body: Obx(() {
         if (c.isLoading.value && c.reviewsList.isEmpty) {
-          return ListView(
-            padding: centeredPadding(
-              MediaQuery.sizeOf(context).width,
-              maxWidth: Responsive.readingMaxWidth,
-              top: 20,
-              bottom: 20 + MediaQuery.paddingOf(context).bottom,
-            ),
-            children: List.generate(
-              5,
-              (_) => const Padding(
-                padding: EdgeInsets.only(bottom: 10),
-                child: Skeleton(height: 96),
-              ),
-            ),
-          );
+          return const ReviewsSkeleton();
         }
         if (c.errorMessage.isNotEmpty) {
           return ErrorView(
@@ -100,9 +87,9 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             itemCount: c.reviewsList.length + (c.isLoadingMore.value ? 1 : 0),
             itemBuilder: (_, i) => i < c.reviewsList.length
                 ? ReviewCard(c.reviewsList[i])
-                : const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Center(child: CircularProgressIndicator()),
+                : Padding(
+                    padding: EdgeInsetsDirectional.all(AppSpacing.lg),
+                    child: const SkeletonShimmer(child: ReviewRowSkeleton()),
                   ),
           ),
         );

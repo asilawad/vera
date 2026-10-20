@@ -41,7 +41,9 @@ class NetImage extends StatelessWidget {
         height: height,
         fit: fit,
         fadeInDuration: AppMotion.normal,
-        placeholder: (_, _) => Skeleton(width: width, height: height),
+        placeholder: (_, _) => SkeletonShimmer(
+          child: Skeleton(width: width, height: height),
+        ),
         errorWidget: (_, _, _) => placeholder,
       );
     }

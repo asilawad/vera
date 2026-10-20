@@ -8,6 +8,7 @@ import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/models/order.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
+import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/states.dart';
 import 'package:souqna_anaqa/screen/setting/order_screen.dart';
 import 'package:souqna_anaqa/screen/home/product_details_screen.dart';
@@ -75,7 +76,7 @@ class _OrderScreenState extends State<OrderDetailsScreen> {
                     message: _orderController.detailsErrorMessage.value,
                     onRetry: _load,
                   )
-                : const Center(child: CircularProgressIndicator()))
+                : const OrderDetailsSkeleton())
           : RefreshIndicator(
               onRefresh: _load,
               child: ListView(

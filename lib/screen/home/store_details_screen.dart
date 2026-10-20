@@ -8,6 +8,7 @@ import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
+import 'package:souqna_anaqa/widget/loading.dart';
 
 /// عن المتجر: الغلاف، الوصف، التوصيل، وأزرار الاتصال وواتساب.
 class StoreDetailsScreen extends StatelessWidget {
@@ -23,7 +24,7 @@ class StoreDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = Get.find<AppGetxController>().store.value;
     if (store == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: StoreDetailsSkeleton());
     }
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(

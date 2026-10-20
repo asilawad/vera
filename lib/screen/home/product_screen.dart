@@ -155,7 +155,7 @@ class _ProductsScreenState extends State<ProductScreen> {
                   itemCount:
                       c.productsList.length + (c.isLoadingMore.value ? 2 : 0),
                   itemBuilder: (_, i) => i >= c.productsList.length
-                      ? const ProductCardSkeleton()
+                      ? const SkeletonShimmer(child: ProductCardSkeleton())
                       : ProductCard(c.productsList[i], heroPrefix: _tag),
                 ),
               );

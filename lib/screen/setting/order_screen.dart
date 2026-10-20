@@ -6,6 +6,7 @@ import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/getx_controller/order_getx_controller.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/models/order.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/states.dart';
@@ -52,17 +53,22 @@ class _OrdersScreenState extends State<OrderScreen> {
       appBar: AppBar(title: const Text('طلباتي')),
       body: Obx(() {
         if (c.isLoading.value) {
-          return ListView(
-            padding: centeredPadding(
-              MediaQuery.sizeOf(context).width,
-              maxWidth: Responsive.readingMaxWidth,
-              top: 20,
-            ),
-            children: List.generate(
-              5,
-              (_) => const Padding(
-                padding: EdgeInsets.only(bottom: 12),
-                child: Skeleton(height: 96, radius: 20),
+          return SkeletonShimmer(
+            child: ListView(
+              padding: centeredPadding(
+                MediaQuery.sizeOf(context).width,
+                maxWidth: Responsive.readingMaxWidth,
+                top: AppSpacing.page,
+              ),
+              children: List.generate(
+                AppSizes.skeletonReviewCount,
+                (_) => Padding(
+                  padding: EdgeInsetsDirectional.only(bottom: AppSpacing.md),
+                  child: Skeleton(
+                    height: AppSizes.reviewSkeletonHeight,
+                    radius: AppRadius.card,
+                  ),
+                ),
               ),
             ),
           );

@@ -10,6 +10,7 @@ import 'package:souqna_anaqa/screen/bottom_nav_bar/cart_content.dart';
 import 'package:souqna_anaqa/screen/bottom_nav_bar/main_screen.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/widget/states.dart';
+import 'package:souqna_anaqa/widget/loading.dart';
 
 class ShoppingScreen extends StatelessWidget {
   const ShoppingScreen({super.key});
@@ -38,7 +39,7 @@ class ShoppingScreen extends StatelessWidget {
           : Obx(() {
               switch (cart.displayState.value) {
                 case CartDisplayState.loading:
-                  return const Center(child: CircularProgressIndicator());
+                  return const CartSkeleton();
                 case CartDisplayState.empty:
                   return EmptyView(
                     icon: Icons.shopping_bag_outlined,

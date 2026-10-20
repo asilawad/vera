@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import 'package:souqna_anaqa/getx_controller/home_getx_controller.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
@@ -29,15 +30,17 @@ class CategoriesScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('الأقسام')),
       body: Obx(() {
         if (home.isLoading.value) {
-          return GridView.builder(
-            padding: centeredPadding(
-              MediaQuery.sizeOf(context).width,
-              top: 20,
-              bottom: 20,
+          return SkeletonShimmer(
+            child: GridView.builder(
+              padding: centeredPadding(
+                MediaQuery.sizeOf(context).width,
+                top: AppSpacing.page,
+                bottom: AppSpacing.page,
+              ),
+              gridDelegate: _delegate,
+              itemCount: AppSizes.skeletonCategoryCount,
+              itemBuilder: (_, _) => Skeleton(radius: AppRadius.card),
             ),
-            gridDelegate: _delegate,
-            itemCount: 6,
-            itemBuilder: (_, _) => const Skeleton(radius: 22),
           );
         }
         if (home.categories.isEmpty) {

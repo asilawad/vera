@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:souqna_anaqa/widget/states.dart';
+import 'package:souqna_anaqa/widget/loading.dart';
 
 class ProductDetailsLoadingView extends StatelessWidget {
   const ProductDetailsLoadingView({
@@ -18,7 +19,7 @@ class ProductDetailsLoadingView extends StatelessWidget {
       appBar: AppBar(),
       body: errorMessage.isNotEmpty
           ? ErrorView(message: errorMessage, onRetry: onRetry)
-          : const Center(child: CircularProgressIndicator()),
+          : const ProductDetailsSkeleton(),
     );
   }
 }
