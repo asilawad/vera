@@ -21,6 +21,9 @@ class AppRadius {
   static double get sm => 8.r;
   static double get md => 14.r;
   static double get lg => 20.r;
+  static double get pill => 999.r;
+  static double get chip => md;
+  static double get card => lg;
 }
 
 class AppSizes {
@@ -44,6 +47,11 @@ class AppSizes {
   static double get borderWidth => 2.w;
   static double get buttonHeight => 48.h;
   static double get galleryHeight => 375.h;
+  static double get chipHeight => 40.h;
+  static double get chipIcon => 18.w;
+  static double get dot => 6.w;
+  static double get dotActive => 18.w;
+  static double get appBarHeight => 56.h;
 
   static const tabletBreakpoint = 600.0;
   static const twoPaneWidth = 840.0;
