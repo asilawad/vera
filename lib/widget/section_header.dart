@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_strings.dart';
 
 class SectionHeader extends StatelessWidget {
   const SectionHeader(this.title, {super.key, this.subtitle, this.onMore});
@@ -40,7 +41,7 @@ class SectionHeader extends StatelessWidget {
             TextButton(
               onPressed: onMore,
               child: Text(
-                'عرض الكل',
+                AppStrings.seeAll,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w600,

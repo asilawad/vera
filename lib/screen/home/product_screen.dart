@@ -6,10 +6,10 @@ import 'package:souqna_anaqa/utils/responsive.dart';
 
 import 'package:souqna_anaqa/getx_controller/product_getx_controller.dart';
 import 'package:souqna_anaqa/preferences/user_getstorage.dart';
-import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/widget/product_card.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/states.dart';
+import 'package:souqna_anaqa/widget/vera_chip.dart';
 
 /// قائمة المنتجات: قسم، بحث، أو مختارات — مع ترتيب وفلاتر وتحميل لا نهائي.
 class ProductScreen extends StatefulWidget {
@@ -315,16 +315,10 @@ class _Toolbar extends StatelessWidget {
               final active = c.sort.value == s.$1 && c.order.value == s.$2;
               return Padding(
                 padding: const EdgeInsetsDirectional.only(end: 8),
-                child: ChoiceChip(
-                  label: Text(s.$3),
+                child: VeraChip(
+                  label: s.$3,
                   selected: active,
-                  showCheckmark: false,
-                  selectedColor: AppColors.ink,
-                  labelStyle: TextStyle(
-                    color: active ? Colors.white : AppColors.ink,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  onSelected: (_) => c.setSort(s.$1, s.$2),
+                  onTap: () => c.setSort(s.$1, s.$2),
                 ),
               );
             }),

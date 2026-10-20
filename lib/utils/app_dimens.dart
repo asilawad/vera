@@ -12,18 +12,21 @@ class AppSpacing {
   static double get page => 20.w;
   static double get compact => 10.w;
   static double get micro => 3.w;
+  static double get xxs => 2.w;
   static double get barVertical => 14.w;
 }
 
 class AppRadius {
   AppRadius._();
 
+  static const double none = 0;
   static double get sm => 8.r;
   static double get md => 14.r;
   static double get lg => 20.r;
   static double get pill => 999.r;
   static double get chip => md;
   static double get card => lg;
+  static double get badge => 10.r;
 }
 
 class AppSizes {
@@ -32,6 +35,7 @@ class AppSizes {
   static double get icon => 24.w;
   static double get compactIcon => 18.w;
   static double get smallIcon => 16.w;
+  static double get ratingStar => 14.w;
   static double get cartSpinner => 18.w;
   static double get productPriceFontSize => 22;
   static double get galleryIndicatorActiveWidth => 20.w;
@@ -52,6 +56,14 @@ class AppSizes {
   static double get dot => 6.w;
   static double get dotActive => 18.w;
   static double get appBarHeight => 56.h;
+  static double get cardShadowBlur => 12.r;
+  static double get discountCompactFont => 11;
+  static double get favoriteButton => 36.w;
+  static double get productCategoryFont => 11;
+  static double get productNameFont => 14;
+  static double get productPriceFont => 14;
+  static double get productRatingFont => 12;
+  static double get productStockFont => 12;
 
   static const tabletBreakpoint = 600.0;
   static const twoPaneWidth = 840.0;

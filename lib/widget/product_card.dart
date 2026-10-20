@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/models/product.dart';
+import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
+import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/widget/favorite_icon.dart';
+import 'package:souqna_anaqa/widget/discount_badge.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
-import 'package:souqna_anaqa/widget/price.dart';
+import 'package:souqna_anaqa/widget/price_tag.dart';
 import 'package:souqna_anaqa/screen/home/product_details_screen.dart';
 
 /// بطاقة المنتج في القوائم: صورة كبيرة، خصم، مفضلة، اسم، سعر، تقييم.
@@ -28,7 +31,6 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
     return GestureDetector(
       onTap: () => Get.to(
         () => ProductDetailsScreen(
@@ -50,61 +52,46 @@ class ProductCard extends StatelessWidget {
                     tag: '$heroPrefix-${product.id}',
                     child: NetImage(
                       product.thumb ?? product.image,
-                      radius: 20.r,
+                      radius: AppRadius.card,
                     ),
                   ),
                 ),
                 if (product.discountPercent != null)
                   PositionedDirectional(
-                    top: 10,
-                    start: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: primary,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        '-${product.discountPercent}%',
-                        textDirection: TextDirection.ltr,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                    top: AppSpacing.compact,
+                    start: AppSpacing.compact,
+                    child: DiscountBadge(
+                      percent: product.discountPercent!,
+                      compact: true,
                     ),
                   ),
                 PositionedDirectional(
-                  top: 8,
-                  end: 8,
-                  child: FavoriteIcon(product, size: 36),
+                  top: AppSpacing.sm,
+                  end: AppSpacing.sm,
+                  child: FavoriteIcon(product, size: AppSizes.favoriteButton),
                 ),
                 if (!product.inStock)
                   Positioned.fill(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.55),
-                        borderRadius: BorderRadius.circular(20.r),
+                        color: AppColors.unavailableProductOverlay,
+                        borderRadius: BorderRadius.circular(AppRadius.card),
                       ),
                       alignment: Alignment.center,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.xs,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.ink,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(AppRadius.pill),
                         ),
                         child: Text(
-                          'نفدت الكمية',
+                          AppStrings.outOfStock,
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12.sp,
+                            color: AppColors.white,
+                            fontSize: AppSizes.productStockFont.sp,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -114,13 +101,16 @@ class ProductCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: AppSpacing.compact),
           if (product.categoryName != null)
             Text(
               product.categoryName!,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 11.sp, color: AppColors.subtle),
+              style: TextStyle(
+                fontSize: AppSizes.productCategoryFont.sp,
+                color: AppColors.subtle,
+              ),
             ),
           // سطران للاسم: الأسماء العربية الطويلة شائعة، وارتفاع الصف يتبع المحتوى.
           Text(
@@ -128,25 +118,30 @@ class ProductCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: AppSizes.productNameFont.sp,
               fontWeight: FontWeight.w600,
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AppSpacing.xs),
           Row(
             children: [
-              Expanded(child: PriceView(product, size: 14)),
+              Expanded(
+                child: PriceTag(product, size: AppSizes.productPriceFont),
+              ),
               if (product.ratingCount > 0) ...[
                 Icon(
                   Icons.star_rounded,
-                  size: 14.sp,
-                  color: const Color(0xFFF5A623),
+                  size: AppSizes.ratingStar.sp,
+                  color: AppColors.star,
                 ),
-                const SizedBox(width: 2),
+                SizedBox(width: AppSpacing.xxs),
                 Text(
                   product.ratingAverage.toStringAsFixed(1),
-                  style: TextStyle(fontSize: 12.sp, color: AppColors.muted),
+                  style: TextStyle(
+                    fontSize: AppSizes.productRatingFont.sp,
+                    color: AppColors.muted,
+                  ),
                 ),
               ],
             ],

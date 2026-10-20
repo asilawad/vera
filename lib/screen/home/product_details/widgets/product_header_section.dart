@@ -5,7 +5,9 @@ import 'package:souqna_anaqa/models/review.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
+import 'package:souqna_anaqa/widget/discount_badge.dart';
 import 'package:souqna_anaqa/widget/price.dart';
+import 'package:souqna_anaqa/widget/price_tag.dart';
 
 class ProductHeaderSection extends StatelessWidget {
   const ProductHeaderSection({
@@ -43,29 +45,10 @@ class ProductHeaderSection extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: PriceView(product, size: AppSizes.productPriceFontSize),
+              child: PriceTag(product, size: AppSizes.productPriceFontSize),
             ),
             if (product.discountPercent != null)
-              Container(
-                padding: EdgeInsetsDirectional.symmetric(
-                  horizontal: AppSpacing.compact,
-                  vertical: AppSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.dangerSurface,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
-                ),
-                child: Text(
-                  AppStrings.discountPercent.replaceAll(
-                    '{percent}',
-                    '${product.discountPercent}',
-                  ),
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: AppColors.danger,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
+              DiscountBadge(percent: product.discountPercent!, filled: false),
           ],
         ),
         SizedBox(height: AppSpacing.compact),

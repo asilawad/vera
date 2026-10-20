@@ -14,6 +14,8 @@ class AppStrings {
   static const description = 'الوصف';
   static const productDetails = 'تفاصيل المنتج';
   static const recommendations = 'قد يعجبك أيضًا';
+  static const seeAll = 'عرض الكل';
+  static const categoryAll = 'الكل';
 
   static const addToCartPrice = 'أضيفي للسلة · {price}';
 

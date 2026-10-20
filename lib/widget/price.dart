@@ -61,7 +61,7 @@ class Stars extends StatelessWidget {
                     ? Icons.star_half_rounded
                     : Icons.star_outline_rounded),
           size: size.sp,
-          color: const Color(0xFFF5A623),
+          color: AppColors.star,
         );
       }),
     );
