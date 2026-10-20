@@ -19,20 +19,26 @@ class DiscountBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = filled ? AppColors.white : AppColors.danger;
+    final textColor = compact || !filled ? AppColors.white : AppColors.danger;
     return Container(
       padding: EdgeInsetsDirectional.symmetric(
         horizontal: compact ? AppSpacing.sm : AppSpacing.compact,
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: filled ? AppColors.primary : AppColors.dangerSurface,
+        color: compact
+            ? AppColors.danger
+            : filled
+            ? AppColors.primary
+            : AppColors.dangerSurface,
         borderRadius: BorderRadius.circular(
           compact ? AppRadius.badge : AppRadius.sm,
         ),
       ),
       child: Text(
-        filled
+        compact
+            ? '-$percent%'
+            : filled
             ? '-$percent%'
             : AppStrings.discountPercent.replaceAll('{percent}', '$percent'),
         textDirection: compact ? TextDirection.ltr : null,

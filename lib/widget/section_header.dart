@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 
 class SectionHeader extends StatelessWidget {
@@ -14,7 +13,12 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 26, 20.w, 14),
+      padding: EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.page,
+        AppSizes.homeSectionTopPadding,
+        AppSpacing.page,
+        AppSizes.homeSectionBottomPadding,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -24,15 +28,16 @@ class SectionHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 19.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: TextStyle(fontSize: 12.5.sp, color: AppColors.muted),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: AppColors.muted),
                   ),
               ],
             ),
@@ -42,10 +47,9 @@ class SectionHeader extends StatelessWidget {
               onPressed: onMore,
               child: Text(
                 AppStrings.seeAll,
-                style: TextStyle(
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w600,
-                  fontSize: 14.sp,
                 ),
               ),
             ),

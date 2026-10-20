@@ -16,6 +16,26 @@ class AppStrings {
   static const recommendations = 'قد يعجبك أيضًا';
   static const seeAll = 'عرض الكل';
   static const categoryAll = 'الكل';
+  static const homeSearchHint = 'ابحثي عن فستان، عباية، حقيبة…';
+  static const homeSearch = 'البحث';
+  static const homeGreetingMorning = 'صباح الخير';
+  static const homeGreetingDay = 'نهارك سعيد';
+  static const homeGreetingEvening = 'مساء الخير';
+  static const homeGreetingWithName = '{greeting}، {name} 👋';
+  static const homeGreetingWithoutName = '{greeting} 👋';
+  static const aboutStore = 'عن المتجر';
+  static const homeShopByCategory = 'تسوّقي حسب القسم';
+  static const homeFeatured = 'مختارات مميزة';
+  static const homeFeaturedSubtitle = 'قطع اخترناها لكِ بعناية';
+  static const homeNewest = 'وصل حديثًا';
+  static const homeBestSellers = 'الأكثر مبيعًا';
+  static const homeBestSellersSubtitle = 'اختيارات عميلاتنا';
+  static const homeAllProducts = 'المنتجات';
+  static const heroFeatured = 'featured';
+  static const heroNewest = 'new';
+  static const heroBestSellers = 'best';
+  static const sortBestSelling = 'best_selling';
+  static const heroProductDefault = 'p';
 
   static const addToCartPrice = 'أضيفي للسلة · {price}';
 
