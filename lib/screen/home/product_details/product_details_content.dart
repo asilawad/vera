@@ -7,11 +7,7 @@ import 'package:souqna_anaqa/models/product.dart';
 import 'package:souqna_anaqa/models/review.dart';
 import 'package:souqna_anaqa/screen/home/product_details/product_details_info.dart';
 import 'package:souqna_anaqa/screen/home/product_details/widgets/product_bottom_bar.dart';
-import 'package:souqna_anaqa/screen/home/product_details/widgets/product_gallery.dart';
-import 'package:souqna_anaqa/utils/app_colors.dart';
-import 'package:souqna_anaqa/utils/app_dimens.dart';
-import 'package:souqna_anaqa/utils/responsive.dart';
-import 'package:souqna_anaqa/widget/favorite_icon.dart';
+import 'package:souqna_anaqa/screen/home/product_details/product_details_layout.dart';
 
 class ProductDetailsContent extends StatelessWidget {
   const ProductDetailsContent({
@@ -25,6 +21,7 @@ class ProductDetailsContent extends StatelessWidget {
     required this.reviewsController,
     required this.quantity,
     required this.cartController,
+    required this.isAdded,
     required this.imageIndex,
     required this.selectedSize,
     required this.selectedColor,
@@ -44,6 +41,7 @@ class ProductDetailsContent extends StatelessWidget {
   final ProductDetailsGetxController reviewsController;
   final int quantity;
   final CartGetxController cartController;
+  final bool isAdded;
   final int imageIndex;
   final String? selectedSize;
   final String? selectedColor;
@@ -58,7 +56,6 @@ class ProductDetailsContent extends StatelessWidget {
     final images = product.images.isNotEmpty
         ? product.images
         : [if (product.image != null) product.image!];
-    final screenSize = MediaQuery.sizeOf(context);
     final details = ProductDetailsInfo(
       id: id,
       product: product,
@@ -77,119 +74,19 @@ class ProductDetailsContent extends StatelessWidget {
         quantity: quantity,
         onQuantityChanged: onQuantityChanged,
         isSubmitting: cartController.isSubmitting.value,
+        isAdded: isAdded,
         onAddToCart: onAddToCart,
       ),
     );
 
-    if (screenSize.width >= AppSizes.twoPaneWidth) {
-      return Scaffold(
-        appBar: AppBar(
-          actions: [
-            Padding(
-              padding: EdgeInsetsDirectional.only(end: AppSpacing.md),
-              child: FavoriteIcon(product, size: 40),
-            ),
-          ],
-        ),
-        body: MaxWidthBox(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 5,
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(
-                    AppSpacing.xl,
-                    AppSpacing.sm,
-                    AppSpacing.xl,
-                    AppSpacing.xl,
-                  ),
-                  child: AspectRatio(
-                    aspectRatio: 1 / 1.1,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                      child: ProductGallery(
-                        images: images,
-                        imageIndex: imageIndex,
-                        heroTag: heroTag,
-                        onPageChanged: onImageChanged,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 6,
-                child: SingleChildScrollView(
-                  padding: EdgeInsetsDirectional.fromSTEB(
-                    AppSpacing.xl,
-                    AppSpacing.sm,
-                    AppSpacing.xl,
-                    120 + MediaQuery.paddingOf(context).bottom,
-                  ),
-                  child: details,
-                ),
-              ),
-            ],
-          ),
-        ),
-        bottomSheet: bottomBar,
-      );
-    }
-
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: (screenSize.width * 1.1).clamp(
-              0,
-              screenSize.height * 0.6,
-            ),
-            pinned: true,
-            backgroundColor: AppColors.paper,
-            leading: Padding(
-              padding: EdgeInsetsDirectional.all(AppSpacing.sm),
-              child: CircleAvatar(
-                backgroundColor: AppColors.white,
-                child: BackButton(color: AppColors.ink),
-              ),
-            ),
-            actions: [
-              Padding(
-                padding: EdgeInsetsDirectional.all(AppSpacing.sm),
-                child: FavoriteIcon(product, size: 40),
-              ),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: ProductGallery(
-                images: images,
-                imageIndex: imageIndex,
-                heroTag: heroTag,
-                onPageChanged: onImageChanged,
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.paper,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(AppRadius.lg),
-                ),
-              ),
-              transform: Matrix4.translationValues(0, -AppSpacing.xl, 0),
-              padding: EdgeInsetsDirectional.fromSTEB(
-                AppSpacing.page,
-                AppSpacing.xl,
-                AppSpacing.page,
-                140,
-              ),
-              child: details,
-            ),
-          ),
-        ],
-      ),
-      bottomSheet: bottomBar,
+    return ProductDetailsLayout(
+      product: product,
+      images: images,
+      heroTag: heroTag,
+      imageIndex: imageIndex,
+      onImageChanged: onImageChanged,
+      details: details,
+      bottomBar: bottomBar,
     );
   }
 }

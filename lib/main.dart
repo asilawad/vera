@@ -31,7 +31,7 @@ Future<void> main() async {
   // نسجّل الكنترولرز قبل runApp لأن الثيم يقرأ لون المتجر من AppGetxController.
   InitialBinding().dependencies();
 
-  runApp(const AnaqaApp());
+  runApp(const VeraApp());
 }
 
 class InitialBinding implements Bindings {
@@ -48,8 +48,8 @@ class InitialBinding implements Bindings {
   }
 }
 
-class AnaqaApp extends StatelessWidget {
-  const AnaqaApp({super.key, this.home = const LunchScreen()});
+class VeraApp extends StatelessWidget {
+  const VeraApp({super.key, this.home = const LunchScreen()});
 
   /// الشاشة الأولى؛ اختبارات التخطيط تمرّر شاشات أخرى بنفس الثيم وتهيئة ScreenUtil.
   final Widget home;

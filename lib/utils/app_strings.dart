@@ -38,6 +38,7 @@ class AppStrings {
   static const heroProductDefault = 'p';
 
   static const addToCartPrice = 'أضيفي للسلة · {price}';
+  static const addedToCart = 'تمت الإضافة';
 
   static const reviewsTitle = 'آراء العميلات';
   static const addReview = 'أضيفي تقييمك';

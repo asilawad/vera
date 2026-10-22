@@ -22,6 +22,7 @@ class AppColors {
   static const Color surface = Colors.white;
   static const Color white = Colors.white;
   static const Color whiteMuted = Color(0x8AFFFFFF);
+  static const Color whiteSubtle = Color(0x99FFFFFF);
   static const Color transparent = Colors.transparent;
   static const Color shadow = Color(0x14000000);
   static const Color sand = Color(0xFFF3EBE4);

@@ -14,6 +14,7 @@ class AppSpacing {
   static double get micro => 3.w;
   static double get xxs => 2.w;
   static double get barVertical => 14.w;
+  static double get navigationIndicatorHorizontal => 14.w;
 }
 
 class AppRadius {
@@ -27,6 +28,7 @@ class AppRadius {
   static double get chip => md;
   static double get card => lg;
   static double get badge => 10.r;
+  static const double navItem = 24;
 }
 
 class AppSizes {
@@ -37,6 +39,10 @@ class AppSizes {
   static double get smallIcon => 16.w;
   static double get ratingStar => 14.w;
   static double get cartSpinner => 18.w;
+  static const double cartBadgeRestScale = 1;
+  static const double cartBadgeBumpScale = 1.15;
+  static const double checkBadgeSize = 40;
+  static const double checkIconScale = 0.6;
   static double get productPriceFontSize => 22;
   static double get galleryIndicatorActiveWidth => 20.w;
   static double get galleryIndicatorWidth => 7.w;
@@ -59,6 +65,8 @@ class AppSizes {
   static double get cardShadowBlur => 12.r;
   static double get discountCompactFont => 11;
   static double get favoriteButton => 36.w;
+  static const double favoritePopScale = 1.15;
+  static const double favoriteIconScale = 0.52;
   static double get productCategoryFont => 11;
   static double get productNameFont => 14;
   static double get productPriceFont => 14;
@@ -105,6 +113,13 @@ class AppSizes {
   static double get sectionHeaderTitleFont => 19;
   static double get productNameLineHeight => 1.4;
   static double get productHeaderInset => 10.w;
+  static const double bottomNavigationHeight = 68;
+  static const double bottomNavigationMaxWidth = 560;
+  static double get productDetailsBottomPadding => 140.h;
+  static double get productDetailsDesktopBottomPadding => 120.h;
+  static double get glassIconButton => 44.r;
+  static double get navItemLabelFont => 10.5;
+  static const double navSelectedOpacity = 0.18;
 
   static const int productGridSkeletonCount = 6;
   static const double skeletonProductTitleWidth = 0.75;

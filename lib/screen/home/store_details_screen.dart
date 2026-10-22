@@ -6,9 +6,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:souqna_anaqa/getx_controller/app_getx_controller.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
+import 'package:souqna_anaqa/widget/glass_icon_button.dart';
+import 'package:souqna_anaqa/widget/glass_sliver_app_bar.dart';
 
 /// عن المتجر: الغلاف، الوصف، التوصيل، وأزرار الاتصال وواتساب.
 class StoreDetailsScreen extends StatelessWidget {
@@ -30,21 +33,21 @@ class StoreDetailsScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
+          GlassSliverAppBar(
             // 220 على عرض 375 كما في التصميم، مع حد أدنى وأقصى للشاشات الأخرى.
             expandedHeight: (MediaQuery.sizeOf(context).width * 0.587).clamp(
               200,
               340,
             ),
-            pinned: true,
-            leading: const Padding(
-              padding: EdgeInsets.all(8),
-              child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: BackButton(color: AppColors.ink),
+            leading: Padding(
+              padding: EdgeInsetsDirectional.all(AppSpacing.sm),
+              child: GlassIconButton(
+                icon: Icons.arrow_back_rounded,
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                onPressed: () => Navigator.maybePop(context),
               ),
             ),
-            flexibleSpace: FlexibleSpaceBar(background: NetImage(store.cover)),
+            background: NetImage(store.cover),
           ),
           SliverToBoxAdapter(
             child: MaxWidthBox(

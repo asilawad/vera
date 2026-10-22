@@ -10,6 +10,7 @@ import 'package:souqna_anaqa/widget/net_image.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/states.dart';
 import 'package:souqna_anaqa/screen/home/product_screen.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 /// كل الأقسام كبطاقات صور كبيرة.
 class CategoriesScreen extends StatelessWidget {
@@ -27,112 +28,118 @@ class CategoriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeGetxController home = Get.find();
     return Scaffold(
-      appBar: AppBar(title: const Text('الأقسام')),
-      body: Obx(() {
-        if (home.isLoading.value) {
-          return SkeletonShimmer(
+      appBar: const GlassAppBar(title: Text('الأقسام')),
+      extendBodyBehindAppBar: true,
+      body: Padding(
+        padding: EdgeInsetsDirectional.only(
+          top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+        ),
+        child: Obx(() {
+          if (home.isLoading.value) {
+            return SkeletonShimmer(
+              child: GridView.builder(
+                padding: centeredPadding(
+                  MediaQuery.sizeOf(context).width,
+                  top: AppSpacing.page,
+                  bottom: AppSpacing.page,
+                ),
+                gridDelegate: _delegate,
+                itemCount: AppSizes.skeletonCategoryCount,
+                itemBuilder: (_, _) => Skeleton(radius: AppRadius.card),
+              ),
+            );
+          }
+          if (home.categories.isEmpty) {
+            return const EmptyView(
+              icon: Icons.grid_view_rounded,
+              title: 'لا توجد أقسام بعد',
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: home.fetchHome,
             child: GridView.builder(
               padding: centeredPadding(
                 MediaQuery.sizeOf(context).width,
-                top: AppSpacing.page,
-                bottom: AppSpacing.page,
+                top: 8,
+                bottom: Responsive.bottomClearance(context),
               ),
               gridDelegate: _delegate,
-              itemCount: AppSizes.skeletonCategoryCount,
-              itemBuilder: (_, _) => Skeleton(radius: AppRadius.card),
-            ),
-          );
-        }
-        if (home.categories.isEmpty) {
-          return const EmptyView(
-            icon: Icons.grid_view_rounded,
-            title: 'لا توجد أقسام بعد',
-          );
-        }
-        return RefreshIndicator(
-          onRefresh: home.fetchHome,
-          child: GridView.builder(
-            padding: centeredPadding(
-              MediaQuery.sizeOf(context).width,
-              top: 8,
-              bottom: Responsive.bottomClearance(context),
-            ),
-            gridDelegate: _delegate,
-            itemCount: home.categories.length,
-            itemBuilder: (_, i) {
-              final c = home.categories[i];
-              return GestureDetector(
-                onTap: () => Get.to(
-                  () => ProductScreen(title: c.name, categoryId: c.id),
-                  preventDuplicates: false,
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(22.r),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      NetImage(c.image),
-                      const DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Color(0xCC0F1222)],
-                          ),
-                        ),
-                      ),
-                      PositionedDirectional(
-                        start: 14,
-                        end: 14,
-                        bottom: 14,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              c.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w700,
-                                height: 1.3,
-                              ),
-                            ),
-                            Text(
-                              '${c.productsCount} منتج',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.75),
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      PositionedDirectional(
-                        top: 12,
-                        end: 12,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_outward_rounded,
-                            size: 16.r,
-                            color: AppColors.ink,
-                          ),
-                        ),
-                      ),
-                    ],
+              itemCount: home.categories.length,
+              itemBuilder: (_, i) {
+                final c = home.categories[i];
+                return GestureDetector(
+                  onTap: () => Get.to(
+                    () => ProductScreen(title: c.name, categoryId: c.id),
+                    preventDuplicates: false,
                   ),
-                ),
-              );
-            },
-          ),
-        );
-      }),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(22.r),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        NetImage(c.image),
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Color(0xCC0F1222)],
+                            ),
+                          ),
+                        ),
+                        PositionedDirectional(
+                          start: 14,
+                          end: 14,
+                          bottom: 14,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                c.name,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.3,
+                                ),
+                              ),
+                              Text(
+                                '${c.productsCount} منتج',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        PositionedDirectional(
+                          top: 12,
+                          end: 12,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_outward_rounded,
+                              size: 16.r,
+                              color: AppColors.ink,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 }

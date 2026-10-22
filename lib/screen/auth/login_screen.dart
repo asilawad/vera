@@ -8,6 +8,7 @@ import 'package:souqna_anaqa/getx_controller/user_api_controller.dart';
 import 'package:souqna_anaqa/screen/auth/create_new_account_screen.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final store = Get.find<AppGetxController>().store.value;
     return Scaffold(
-      appBar: AppBar(),
+      appBar: const GlassAppBar(),
       body: SafeArea(
         child: Form(
           key: _form,

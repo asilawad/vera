@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +11,9 @@ import 'package:souqna_anaqa/screen/home/product_details/product_details_content
 import 'package:souqna_anaqa/screen/home/product_details/product_details_loading_view.dart';
 import 'package:souqna_anaqa/screen/bottom_nav_bar/main_screen.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
+import 'package:souqna_anaqa/utils/app_motion.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
+import 'package:souqna_anaqa/widget/product_hero.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({
@@ -29,7 +33,8 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductDetailsScreen> {
   late final int _id = widget.id;
-  late final String _hero = widget.hero ?? 'p-$_id';
+  late final String _hero =
+      widget.hero ?? ProductHero.tagFor(AppStrings.heroProductDefault, _id);
   late final String _tag =
       'product-$_id-${DateTime.now().microsecondsSinceEpoch}';
   late final ProductDetailsGetxController _detailsController = Get.put(
@@ -42,6 +47,8 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
   int _quantity = 1;
   String? _size;
   String? _color;
+  bool _isAdded = false;
+  Timer? _addedTimer;
 
   @override
   void initState() {
@@ -52,6 +59,7 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
 
   @override
   void dispose() {
+    _addedTimer?.cancel();
     Get.delete<ProductDetailsGetxController>(tag: _tag);
     super.dispose();
   }
@@ -83,6 +91,13 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
     if (added && buyNow) {
       Get.until((route) => route.isFirst);
       MainScreenController.to.go(2);
+    } else if (added && mounted) {
+      _addedTimer?.cancel();
+      setState(() => _isAdded = true);
+      _addedTimer = Timer(AppMotion.successHold, () {
+        if (!mounted) return;
+        setState(() => _isAdded = false);
+      });
     }
   }
 
@@ -106,6 +121,7 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
         reviewsController: _detailsController,
         quantity: _quantity,
         cartController: _cartController,
+        isAdded: _isAdded,
         imageIndex: _imageIndex,
         selectedSize: _size,
         selectedColor: _color,

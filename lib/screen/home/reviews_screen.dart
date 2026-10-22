@@ -7,6 +7,7 @@ import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/review_card.dart';
 import 'package:souqna_anaqa/widget/states.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 /// «كل التقييمات» لمنتج — تُحمَّل صفحة بعد صفحة مع النزول.
 class ReviewsScreen extends StatefulWidget {
@@ -47,7 +48,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: GlassAppBar(
         title: Obx(
           () => Text(
             c.total.value > 0
@@ -56,44 +57,50 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           ),
         ),
       ),
-      body: Obx(() {
-        if (c.isLoading.value && c.reviewsList.isEmpty) {
-          return const ReviewsSkeleton();
-        }
-        if (c.errorMessage.isNotEmpty) {
-          return ErrorView(
-            message: c.errorMessage.value,
-            onRetry: c.fetchReviews,
-          );
-        }
-        if (c.reviewsList.isEmpty) {
-          return const EmptyView(
-            icon: Icons.rate_review_outlined,
-            title: 'لا توجد تقييمات بعد',
-            body: 'كوني أول من يقيّم هذا المنتج.',
-          );
-        }
-        return RefreshIndicator(
-          onRefresh: c.fetchReviews,
-          child: ListView.builder(
-            controller: _scroll,
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: centeredPadding(
-              MediaQuery.sizeOf(context).width,
-              maxWidth: Responsive.readingMaxWidth,
-              top: 20,
-              bottom: 20 + MediaQuery.paddingOf(context).bottom,
+      extendBodyBehindAppBar: true,
+      body: Padding(
+        padding: EdgeInsetsDirectional.only(
+          top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+        ),
+        child: Obx(() {
+          if (c.isLoading.value && c.reviewsList.isEmpty) {
+            return const ReviewsSkeleton();
+          }
+          if (c.errorMessage.isNotEmpty) {
+            return ErrorView(
+              message: c.errorMessage.value,
+              onRetry: c.fetchReviews,
+            );
+          }
+          if (c.reviewsList.isEmpty) {
+            return const EmptyView(
+              icon: Icons.rate_review_outlined,
+              title: 'لا توجد تقييمات بعد',
+              body: 'كوني أول من يقيّم هذا المنتج.',
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: c.fetchReviews,
+            child: ListView.builder(
+              controller: _scroll,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: centeredPadding(
+                MediaQuery.sizeOf(context).width,
+                maxWidth: Responsive.readingMaxWidth,
+                top: 20,
+                bottom: 20 + MediaQuery.paddingOf(context).bottom,
+              ),
+              itemCount: c.reviewsList.length + (c.isLoadingMore.value ? 1 : 0),
+              itemBuilder: (_, i) => i < c.reviewsList.length
+                  ? ReviewCard(c.reviewsList[i])
+                  : Padding(
+                      padding: EdgeInsetsDirectional.all(AppSpacing.lg),
+                      child: const SkeletonShimmer(child: ReviewRowSkeleton()),
+                    ),
             ),
-            itemCount: c.reviewsList.length + (c.isLoadingMore.value ? 1 : 0),
-            itemBuilder: (_, i) => i < c.reviewsList.length
-                ? ReviewCard(c.reviewsList[i])
-                : Padding(
-                    padding: EdgeInsetsDirectional.all(AppSpacing.lg),
-                    child: const SkeletonShimmer(child: ReviewRowSkeleton()),
-                  ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 }

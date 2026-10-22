@@ -7,8 +7,10 @@ import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/widget/product_card_image.dart';
+import 'package:souqna_anaqa/widget/product_hero.dart';
 import 'package:souqna_anaqa/widget/price_tag.dart';
 import 'package:souqna_anaqa/screen/home/product_details_screen.dart';
+import 'package:souqna_anaqa/utils/app_motion.dart';
 
 /// بطاقة المنتج في القوائم: صورة كبيرة، خصم، مفضلة، اسم، سعر، تقييم.
 class ProductCard extends StatelessWidget {
@@ -34,9 +36,13 @@ class ProductCard extends StatelessWidget {
         () => ProductDetailsScreen(
           id: product.id,
           product: product,
-          hero: '$heroPrefix-${product.id}',
+          hero: ProductHero.tagFor(heroPrefix, product.id),
         ),
         preventDuplicates: false,
+        transition: Transition.fadeIn,
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : AppMotion.slow,
       ),
       child: Container(
         decoration: BoxDecoration(

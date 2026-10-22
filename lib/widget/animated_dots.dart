@@ -18,12 +18,15 @@ class AnimatedDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final duration = MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : AppMotion.normal;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         count,
         (dotIndex) => AnimatedContainer(
-          duration: AppMotion.normal,
+          duration: duration,
           curve: AppMotion.standard,
           margin: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.micro),
           width: dotIndex == index ? AppSizes.dotActive : AppSizes.dot,

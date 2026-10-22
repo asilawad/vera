@@ -10,6 +10,8 @@ import 'package:souqna_anaqa/widget/product_card.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/states.dart';
 import 'package:souqna_anaqa/widget/vera_chip.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 /// قائمة المنتجات: قسم، بحث، أو مختارات — مع ترتيب وفلاتر وتحميل لا نهائي.
 class ProductScreen extends StatefulWidget {
@@ -77,7 +79,7 @@ class _ProductsScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: GlassAppBar(
         title: _isSearch
             ? TextField(
                 controller: _search,
@@ -102,66 +104,72 @@ class _ProductsScreenState extends State<ProductScreen> {
               )
             : Text(widget.title),
       ),
-      body: Column(
-        children: [
-          _Toolbar(c: c, onFilters: () => _openFilters(context)),
-          if (_isSearch && _search.text.isEmpty && _recent.isNotEmpty)
-            Padding(
-              padding: centeredPadding(
-                MediaQuery.sizeOf(context).width,
-                top: 4,
-                bottom: 8,
-              ),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _recent
-                    .map(
-                      (r) => ActionChip(
-                        avatar: const Icon(Icons.history_rounded, size: 16),
-                        label: Text(r),
-                        onPressed: () {
-                          _search.text = r;
-                          _submitSearch(r);
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-          Expanded(
-            child: Obx(() {
-              if (c.isLoading.value) return const ProductGridSkeleton();
-              if (c.errorMessage.value.isNotEmpty) {
-                return ErrorView(
-                  message: c.errorMessage.value,
-                  onRetry: c.fetchProducts,
-                );
-              }
-              if (c.productsList.isEmpty) {
-                return EmptyView(
-                  icon: Icons.search_off_rounded,
-                  title: 'لا توجد نتائج',
-                  body: c.activeFilters > 0
-                      ? 'جرّبي تخفيف الفلاتر.'
-                      : 'جرّبي كلمة بحث أخرى.',
-                );
-              }
-              return RefreshIndicator(
-                onRefresh: c.fetchProducts,
-                child: ProductGrid(
-                  controller: _scroll,
-                  bottom: 40 + MediaQuery.paddingOf(context).bottom,
-                  itemCount:
-                      c.productsList.length + (c.isLoadingMore.value ? 2 : 0),
-                  itemBuilder: (_, i) => i >= c.productsList.length
-                      ? const SkeletonShimmer(child: ProductCardSkeleton())
-                      : ProductCard(c.productsList[i], heroPrefix: _tag),
+      extendBodyBehindAppBar: true,
+      body: Padding(
+        padding: EdgeInsetsDirectional.only(
+          top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+        ),
+        child: Column(
+          children: [
+            _Toolbar(c: c, onFilters: () => _openFilters(context)),
+            if (_isSearch && _search.text.isEmpty && _recent.isNotEmpty)
+              Padding(
+                padding: centeredPadding(
+                  MediaQuery.sizeOf(context).width,
+                  top: 4,
+                  bottom: 8,
                 ),
-              );
-            }),
-          ),
-        ],
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _recent
+                      .map(
+                        (r) => ActionChip(
+                          avatar: const Icon(Icons.history_rounded, size: 16),
+                          label: Text(r),
+                          onPressed: () {
+                            _search.text = r;
+                            _submitSearch(r);
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            Expanded(
+              child: Obx(() {
+                if (c.isLoading.value) return const ProductGridSkeleton();
+                if (c.errorMessage.value.isNotEmpty) {
+                  return ErrorView(
+                    message: c.errorMessage.value,
+                    onRetry: c.fetchProducts,
+                  );
+                }
+                if (c.productsList.isEmpty) {
+                  return EmptyView(
+                    icon: Icons.search_off_rounded,
+                    title: 'لا توجد نتائج',
+                    body: c.activeFilters > 0
+                        ? 'جرّبي تخفيف الفلاتر.'
+                        : 'جرّبي كلمة بحث أخرى.',
+                  );
+                }
+                return RefreshIndicator(
+                  onRefresh: c.fetchProducts,
+                  child: ProductGrid(
+                    controller: _scroll,
+                    bottom: 40 + MediaQuery.paddingOf(context).bottom,
+                    itemCount:
+                        c.productsList.length + (c.isLoadingMore.value ? 2 : 0),
+                    itemBuilder: (_, i) => i >= c.productsList.length
+                        ? const SkeletonShimmer(child: ProductCardSkeleton())
+                        : ProductCard(c.productsList[i], heroPrefix: _tag),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

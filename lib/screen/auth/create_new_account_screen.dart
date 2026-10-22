@@ -5,6 +5,7 @@ import 'package:souqna_anaqa/utils/responsive.dart';
 
 import 'package:souqna_anaqa/getx_controller/user_api_controller.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 class CreateNewAccountScreen extends StatefulWidget {
   const CreateNewAccountScreen({super.key});
@@ -43,7 +44,7 @@ class _RegisterScreenState extends State<CreateNewAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('حساب جديد')),
+      appBar: const GlassAppBar(title: Text('حساب جديد')),
       body: Form(
         key: _form,
         child: ListView(

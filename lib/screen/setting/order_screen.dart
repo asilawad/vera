@@ -11,6 +11,7 @@ import 'package:souqna_anaqa/models/order.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/states.dart';
 import 'package:souqna_anaqa/screen/setting/order_details_screen.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 /// ألوان حالات الطلب.
 Color orderStatusColor(String status) => switch (status) {
@@ -50,59 +51,65 @@ class _OrdersScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('طلباتي')),
-      body: Obx(() {
-        if (c.isLoading.value) {
-          return SkeletonShimmer(
-            child: ListView(
-              padding: centeredPadding(
-                MediaQuery.sizeOf(context).width,
-                maxWidth: Responsive.readingMaxWidth,
-                top: AppSpacing.page,
-              ),
-              children: List.generate(
-                AppSizes.skeletonReviewCount,
-                (_) => Padding(
-                  padding: EdgeInsetsDirectional.only(bottom: AppSpacing.md),
-                  child: Skeleton(
-                    height: AppSizes.reviewSkeletonHeight,
-                    radius: AppRadius.card,
+      appBar: const GlassAppBar(title: Text('طلباتي')),
+      extendBodyBehindAppBar: true,
+      body: Padding(
+        padding: EdgeInsetsDirectional.only(
+          top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+        ),
+        child: Obx(() {
+          if (c.isLoading.value) {
+            return SkeletonShimmer(
+              child: ListView(
+                padding: centeredPadding(
+                  MediaQuery.sizeOf(context).width,
+                  maxWidth: Responsive.readingMaxWidth,
+                  top: AppSpacing.page,
+                ),
+                children: List.generate(
+                  AppSizes.skeletonReviewCount,
+                  (_) => Padding(
+                    padding: EdgeInsetsDirectional.only(bottom: AppSpacing.md),
+                    child: Skeleton(
+                      height: AppSizes.reviewSkeletonHeight,
+                      radius: AppRadius.card,
+                    ),
                   ),
                 ),
               ),
+            );
+          }
+          if (c.errorMessage.value.isNotEmpty) {
+            return ErrorView(
+              message: c.errorMessage.value,
+              onRetry: c.fetchOrders,
+            );
+          }
+          if (c.ordersList.isEmpty) {
+            return EmptyView(
+              icon: Icons.receipt_long_outlined,
+              title: 'لا توجد طلبات بعد',
+              body: 'عندما تطلبين، ستجدين طلباتك وتتبعها هنا.',
+              action: 'تسوّقي الآن',
+              onAction: Get.back,
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: c.fetchOrders,
+            child: ListView.separated(
+              padding: centeredPadding(
+                MediaQuery.sizeOf(context).width,
+                maxWidth: Responsive.readingMaxWidth,
+                top: 20,
+                bottom: 20 + MediaQuery.paddingOf(context).bottom,
+              ),
+              itemCount: c.ordersList.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              itemBuilder: (_, i) => _OrderCard(c.ordersList[i]),
             ),
           );
-        }
-        if (c.errorMessage.value.isNotEmpty) {
-          return ErrorView(
-            message: c.errorMessage.value,
-            onRetry: c.fetchOrders,
-          );
-        }
-        if (c.ordersList.isEmpty) {
-          return EmptyView(
-            icon: Icons.receipt_long_outlined,
-            title: 'لا توجد طلبات بعد',
-            body: 'عندما تطلبين، ستجدين طلباتك وتتبعها هنا.',
-            action: 'تسوّقي الآن',
-            onAction: Get.back,
-          );
-        }
-        return RefreshIndicator(
-          onRefresh: c.fetchOrders,
-          child: ListView.separated(
-            padding: centeredPadding(
-              MediaQuery.sizeOf(context).width,
-              maxWidth: Responsive.readingMaxWidth,
-              top: 20,
-              bottom: 20 + MediaQuery.paddingOf(context).bottom,
-            ),
-            itemCount: c.ordersList.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (_, i) => _OrderCard(c.ordersList[i]),
-          ),
-        );
-      }),
+        }),
+      ),
     );
   }
 }

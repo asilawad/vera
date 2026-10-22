@@ -8,6 +8,7 @@ import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/widget/discount_badge.dart';
 import 'package:souqna_anaqa/widget/favorite_icon.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
+import 'package:souqna_anaqa/widget/product_hero.dart';
 
 class ProductCardImage extends StatelessWidget {
   const ProductCardImage({
@@ -28,8 +29,9 @@ class ProductCardImage extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: Hero(
-              tag: '$heroPrefix-${product.id}',
+            child: ProductHero(
+              tag: ProductHero.tagFor(heroPrefix, product.id),
+              radius: AppRadius.card,
               child: NetImage(
                 product.thumb ?? product.image,
                 radius: AppRadius.card,

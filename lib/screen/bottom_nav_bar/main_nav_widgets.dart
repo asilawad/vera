@@ -3,8 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
+import 'package:souqna_anaqa/utils/app_motion.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/widget/cart_count_badge.dart';
+import 'package:souqna_anaqa/widget/glass_container.dart';
 
 const _navItems = [
   (Icons.home_outlined, Icons.home_rounded, AppStrings.navHome),
@@ -27,27 +30,44 @@ class MainBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      minimum: EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.lg,
+        0,
+        AppSpacing.lg,
+        AppSpacing.md,
+      ).resolve(Directionality.of(context)),
       child: Align(
         heightFactor: 1,
         child: Container(
-          constraints: const BoxConstraints(minHeight: 68, maxWidth: 560),
+          constraints: BoxConstraints(
+            minHeight: AppSizes.bottomNavigationHeight,
+            maxWidth: AppSizes.bottomNavigationMaxWidth,
+          ),
           decoration: BoxDecoration(
-            color: AppColors.ink,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(AppRadius.card),
             boxShadow: [
               BoxShadow(
-                color: AppColors.ink.withValues(alpha: 0.25),
-                blurRadius: 24,
-                offset: const Offset(0, 10),
+                color: AppColors.shadow,
+                blurRadius: AppSizes.cardShadowBlur,
+                offset: Offset(0, AppSpacing.sm),
               ),
             ],
           ),
-          child: Row(
-            children: List.generate(
-              _navItems.length,
-              (itemIndex) =>
-                  Expanded(child: _NavItem(itemIndex, index, onSelect)),
+          child: GlassContainer(
+            strong: true,
+            radius: AppRadius.card,
+            child: Row(
+              children: List.generate(
+                _navItems.length,
+                (itemIndex) => Expanded(
+                  child: _NavItem(
+                    itemIndex,
+                    index,
+                    onSelect,
+                    lightSurface: true,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -86,23 +106,38 @@ class MainSideBar extends StatelessWidget {
 }
 
 class _NavItem extends StatelessWidget {
-  const _NavItem(this.itemIndex, this.selectedIndex, this.onSelect);
+  const _NavItem(
+    this.itemIndex,
+    this.selectedIndex,
+    this.onSelect, {
+    this.lightSurface = false,
+  });
 
   final int itemIndex;
   final RxInt selectedIndex;
   final ValueChanged<int> onSelect;
+  final bool lightSurface;
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
+    final primary = lightSurface
+        ? AppColors.primary
+        : Theme.of(context).colorScheme.primary;
+    final unselectedIcon = lightSurface
+        ? AppColors.muted
+        : AppColors.whiteSubtle;
+    final unselectedLabel = lightSurface
+        ? AppColors.muted
+        : AppColors.whiteMuted;
+    final activeLabel = lightSurface ? AppColors.primary : AppColors.white;
     final (icon, activeIcon, label) = _navItems[itemIndex];
     return Obx(() {
       final active = selectedIndex.value == itemIndex;
       return InkWell(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppRadius.navItem),
         onTap: () => onSelect(itemIndex),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsetsDirectional.symmetric(vertical: AppSpacing.sm),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -110,34 +145,34 @@ class _NavItem extends StatelessWidget {
                 visible: itemIndex == 2,
                 color: primary,
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 4,
+                  duration: AppMotion.normal,
+                  padding: EdgeInsetsDirectional.symmetric(
+                    horizontal: AppSpacing.navigationIndicatorHorizontal,
+                    vertical: AppSpacing.xs,
                   ),
                   decoration: BoxDecoration(
                     color: active
-                        ? primary.withValues(alpha: 0.18)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(14),
+                        ? primary.withValues(alpha: AppSizes.navSelectedOpacity)
+                        : AppColors.transparent,
+                    borderRadius: BorderRadius.circular(AppRadius.chip),
                   ),
                   child: Icon(
                     active ? activeIcon : icon,
-                    color: active ? primary : Colors.white60,
-                    size: 24,
+                    color: active ? primary : unselectedIcon,
+                    size: AppSizes.icon,
                   ),
                 ),
               ),
-              const SizedBox(height: 3),
+              SizedBox(height: AppSpacing.micro),
               Text(
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.fade,
                 softWrap: false,
                 style: TextStyle(
-                  fontSize: 10.5.sp,
+                  fontSize: AppSizes.navItemLabelFont.sp,
                   fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-                  color: active ? Colors.white : Colors.white54,
+                  color: active ? activeLabel : unselectedLabel,
                 ),
               ),
             ],

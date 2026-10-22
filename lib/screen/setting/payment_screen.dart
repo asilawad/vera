@@ -12,6 +12,7 @@ import 'package:souqna_anaqa/screen/setting/checkout_form_fields.dart';
 import 'package:souqna_anaqa/screen/setting/checkout_order_summary.dart';
 import 'package:souqna_anaqa/screen/setting/order_success_screen.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
@@ -76,7 +77,7 @@ class _CheckoutScreenState extends State<PaymentScreen> {
     final storeAddress = Get.find<AppGetxController>().store.value?.address;
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.checkout)),
+      appBar: const GlassAppBar(title: Text(AppStrings.checkout)),
       body: Form(
         key: _form,
         child: ListView(
