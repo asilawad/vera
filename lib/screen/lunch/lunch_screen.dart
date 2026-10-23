@@ -32,6 +32,7 @@ class _SplashScreenState extends State<LunchScreen> {
       Get.find<UserProfileGetxController>().fetchUserProfile(),
       Future.delayed(AppBrand.splashMinDuration),
     ]);
+    if (!mounted) return;
     if (results.first == true) {
       Get.offAll(() => const MainScreen(), transition: Transition.fadeIn);
     } else {
@@ -88,10 +89,10 @@ class _SplashScreenState extends State<LunchScreen> {
                 Padding(
                   padding: AppBrand.splashBottomPadding,
                   child: _error == null
-                      ? SizedBox(
+                      ? const SizedBox(
                           width: AppBrand.loaderSize,
                           height: AppBrand.loaderSize,
-                          child: const CircularProgressIndicator(
+                          child: CircularProgressIndicator(
                             strokeWidth: AppBrand.loaderStroke,
                             color: AppBrand.gold,
                           ),

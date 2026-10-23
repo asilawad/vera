@@ -17,8 +17,9 @@ import 'package:souqna_anaqa/widget/glass_sliver_app_bar.dart';
 class StoreDetailsScreen extends StatelessWidget {
   const StoreDetailsScreen({super.key});
 
-  Future<void> _open(Uri uri) async {
+  Future<void> _open(BuildContext context, Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (!context.mounted) return;
       Helpers.showSnackBar(message: 'تعذّر فتح التطبيق', error: true);
     }
   }
@@ -150,6 +151,7 @@ class StoreDetailsScreen extends StatelessWidget {
                           foregroundColor: Colors.white,
                         ),
                         onPressed: () => _open(
+                          context,
                           Uri.parse(
                             'https://wa.me/${store.whatsapp!.replaceAll(RegExp(r'[^0-9]'), '')}',
                           ),
@@ -160,7 +162,8 @@ class StoreDetailsScreen extends StatelessWidget {
                     if (store.phone != null) ...[
                       const SizedBox(height: 10),
                       OutlinedButton.icon(
-                        onPressed: () => _open(Uri.parse('tel:${store.phone}')),
+                        onPressed: () =>
+                            _open(context, Uri.parse('tel:${store.phone}')),
                         icon: const Icon(Icons.call_outlined),
                         label: Text('اتصال: ${store.phone}'),
                       ),

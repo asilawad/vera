@@ -34,6 +34,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       name: _name.text,
       phone: _phone.text,
     );
+    if (!mounted) return;
     if (ok) Get.back();
   }
 

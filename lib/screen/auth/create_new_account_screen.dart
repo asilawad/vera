@@ -38,6 +38,7 @@ class _RegisterScreenState extends State<CreateNewAccountScreen> {
       phone: _phone.text,
       password: _password.text,
     );
+    if (!mounted) return;
     if (ok) Get.back(result: true);
   }
 

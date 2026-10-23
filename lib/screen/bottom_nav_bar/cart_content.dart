@@ -13,24 +13,26 @@ class CartContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = Get.find<CartGetxController>();
-    return Obx(
-      () => RefreshIndicator(
-        onRefresh: cart.fetchCart,
-        child: ListView(
-          padding: centeredPadding(
-            MediaQuery.sizeOf(context).width,
-            maxWidth: Responsive.readingMaxWidth,
-            top: 8,
-            bottom: Responsive.bottomClearance(context, 150),
-          ),
-          children: [
-            ...cart.items.map((item) => CartLine(item)),
-            const SizedBox(height: 8),
-            const CartCouponBox(),
-            const SizedBox(height: 16),
-            const CartSummaryView(),
-          ],
+    return RefreshIndicator(
+      onRefresh: cart.fetchCart,
+      child: ListView(
+        padding: centeredPadding(
+          MediaQuery.sizeOf(context).width,
+          maxWidth: Responsive.readingMaxWidth,
+          top: 8,
+          bottom: Responsive.bottomClearance(context, 150),
         ),
+        children: [
+          Obx(
+            () => Column(
+              children: cart.items.map((item) => CartLine(item)).toList(),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const CartCouponBox(),
+          const SizedBox(height: 16),
+          const CartSummaryView(),
+        ],
       ),
     );
   }

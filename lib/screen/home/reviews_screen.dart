@@ -63,8 +63,8 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
         ),
         child: Obx(() {
-          if (c.isLoading.value && c.reviewsList.isEmpty) {
-            return const ReviewsSkeleton();
+          if (c.isLoading.value) {
+            return _ReviewListState(c, _scroll, loading: true);
           }
           if (c.errorMessage.isNotEmpty) {
             return ErrorView(
@@ -72,35 +72,55 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
               onRetry: c.fetchReviews,
             );
           }
-          if (c.reviewsList.isEmpty) {
-            return const EmptyView(
-              icon: Icons.rate_review_outlined,
-              title: 'لا توجد تقييمات بعد',
-              body: 'كوني أول من يقيّم هذا المنتج.',
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: c.fetchReviews,
-            child: ListView.builder(
-              controller: _scroll,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: centeredPadding(
-                MediaQuery.sizeOf(context).width,
-                maxWidth: Responsive.readingMaxWidth,
-                top: 20,
-                bottom: 20 + MediaQuery.paddingOf(context).bottom,
-              ),
-              itemCount: c.reviewsList.length + (c.isLoadingMore.value ? 1 : 0),
-              itemBuilder: (_, i) => i < c.reviewsList.length
-                  ? ReviewCard(c.reviewsList[i])
-                  : Padding(
-                      padding: EdgeInsetsDirectional.all(AppSpacing.lg),
-                      child: const SkeletonShimmer(child: ReviewRowSkeleton()),
-                    ),
-            ),
-          );
+          return _ReviewListState(c, _scroll);
         }),
       ),
     );
+  }
+}
+
+class _ReviewListState extends StatelessWidget {
+  const _ReviewListState(this.controller, this.scroll, {this.loading = false});
+
+  final ReviewsGetxController controller;
+  final ScrollController scroll;
+  final bool loading;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (loading && controller.reviewsList.isEmpty) {
+        return const ReviewsSkeleton();
+      }
+      if (controller.reviewsList.isEmpty) {
+        return const EmptyView(
+          icon: Icons.rate_review_outlined,
+          title: 'لا توجد تقييمات بعد',
+          body: 'كوني أول من يقيّم هذا المنتج.',
+        );
+      }
+      return RefreshIndicator(
+        onRefresh: controller.fetchReviews,
+        child: ListView.builder(
+          controller: scroll,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: centeredPadding(
+            MediaQuery.sizeOf(context).width,
+            maxWidth: Responsive.readingMaxWidth,
+            top: 20,
+            bottom: 20 + MediaQuery.paddingOf(context).bottom,
+          ),
+          itemCount:
+              controller.reviewsList.length +
+              (controller.isLoadingMore.value ? 1 : 0),
+          itemBuilder: (_, i) => i < controller.reviewsList.length
+              ? ReviewCard(controller.reviewsList[i])
+              : Padding(
+                  padding: EdgeInsetsDirectional.all(AppSpacing.lg),
+                  child: const SkeletonShimmer(child: ReviewRowSkeleton()),
+                ),
+        ),
+      );
+    });
   }
 }

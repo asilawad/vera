@@ -49,97 +49,113 @@ class CategoriesScreen extends StatelessWidget {
               ),
             );
           }
-          if (home.categories.isEmpty) {
-            return const EmptyView(
-              icon: Icons.grid_view_rounded,
-              title: 'لا توجد أقسام بعد',
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: home.fetchHome,
-            child: GridView.builder(
-              padding: centeredPadding(
-                MediaQuery.sizeOf(context).width,
-                top: 8,
-                bottom: Responsive.bottomClearance(context),
-              ),
-              gridDelegate: _delegate,
-              itemCount: home.categories.length,
-              itemBuilder: (_, i) {
-                final c = home.categories[i];
-                return GestureDetector(
-                  onTap: () => Get.to(
-                    () => ProductScreen(title: c.name, categoryId: c.id),
-                    preventDuplicates: false,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(22.r),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        NetImage(c.image),
-                        const DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.transparent, Color(0xCC0F1222)],
-                            ),
-                          ),
-                        ),
-                        PositionedDirectional(
-                          start: 14,
-                          end: 14,
-                          bottom: 14,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                c.name,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.3,
-                                ),
-                              ),
-                              Text(
-                                '${c.productsCount} منتج',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.75),
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        PositionedDirectional(
-                          top: 12,
-                          end: 12,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_outward_rounded,
-                              size: 16.r,
-                              color: AppColors.ink,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
+          return _CategoriesList(home);
         }),
       ),
     );
+  }
+}
+
+class _CategoriesList extends StatelessWidget {
+  const _CategoriesList(this.home);
+
+  final HomeGetxController home;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (home.categories.isEmpty) {
+        return const EmptyView(
+          icon: Icons.grid_view_rounded,
+          title: 'لا توجد أقسام بعد',
+        );
+      }
+      return RefreshIndicator(
+        onRefresh: home.fetchHome,
+        child: GridView.builder(
+          padding: centeredPadding(
+            MediaQuery.sizeOf(context).width,
+            top: 8,
+            bottom: Responsive.bottomClearance(context),
+          ),
+          gridDelegate: CategoriesScreen._delegate,
+          itemCount: home.categories.length,
+          itemBuilder: (_, i) {
+            final category = home.categories[i];
+            return GestureDetector(
+              onTap: () => Get.to(
+                () => ProductScreen(
+                  title: category.name,
+                  categoryId: category.id,
+                ),
+                preventDuplicates: false,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(22.r),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    NetImage(category.image),
+                    const DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.transparent, Color(0xCC0F1222)],
+                        ),
+                      ),
+                    ),
+                    PositionedDirectional(
+                      start: 14,
+                      end: 14,
+                      bottom: 14,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            category.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700,
+                              height: 1.3,
+                            ),
+                          ),
+                          Text(
+                            '${category.productsCount} منتج',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.75),
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PositionedDirectional(
+                      top: 12,
+                      end: 12,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_outward_rounded,
+                          size: 16.r,
+                          color: AppColors.ink,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    });
   }
 }

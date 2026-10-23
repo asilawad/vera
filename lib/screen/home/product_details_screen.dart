@@ -83,11 +83,13 @@ class _ProductScreenState extends State<ProductDetailsScreen> {
     }
     final UserProfileGetxController profile = Get.find();
     if (!await profile.ensureLoggedIn()) return;
+    if (!mounted) return;
     final added = await _cartController.addToCart(
       productId: product.id,
       quantity: _quantity,
       options: {'size': ?_size, 'color': ?_color},
     );
+    if (!mounted) return;
     if (added && buyNow) {
       Get.until((route) => route.isFirst);
       MainScreenController.to.go(2);

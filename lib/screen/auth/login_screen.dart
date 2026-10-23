@@ -36,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       email: _email.text,
       password: _password.text,
     );
+    if (!mounted) return;
     if (ok) Get.back(result: true);
   }
 
@@ -134,6 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       final ok = await Get.to(
                         () => const CreateNewAccountScreen(),
                       );
+                      if (!mounted) return;
                       if (ok == true) Get.back(result: true);
                     },
                     child: const Text(

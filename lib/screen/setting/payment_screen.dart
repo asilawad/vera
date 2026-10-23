@@ -51,6 +51,7 @@ class _CheckoutScreenState extends State<PaymentScreen> {
       notes: _notes.text,
       payment: _payment,
     );
+    if (!mounted) return;
     if (order != null) {
       Get.off(
         () => OrderSuccessScreen(order: order),

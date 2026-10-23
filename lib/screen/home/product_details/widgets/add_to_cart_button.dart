@@ -29,7 +29,7 @@ class AddToCartButton extends StatelessWidget {
         ? SizedBox(
             width: AppSizes.cartSpinner,
             height: AppSizes.cartSpinner,
-            child: CircularProgressIndicator(
+            child: const CircularProgressIndicator(
               strokeWidth: 2,
               color: AppColors.white,
             ),

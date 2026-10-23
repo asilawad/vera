@@ -17,6 +17,7 @@ class ProductReviewSheet {
   }) async {
     final UserProfileGetxController profile = Get.find();
     if (!await profile.ensureLoggedIn()) return;
+    if (!context.mounted) return;
     int rating = 5;
     final comment = TextEditingController();
     await Get.bottomSheet(

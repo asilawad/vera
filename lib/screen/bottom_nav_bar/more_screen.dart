@@ -160,6 +160,7 @@ class MoreScreen extends StatelessWidget {
                       ],
                     ),
                   );
+                  if (!context.mounted) return;
                   if (ok == true) await UserApiController().logout();
                 },
               ),

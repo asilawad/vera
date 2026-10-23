@@ -36,7 +36,8 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductsScreenState extends State<ProductScreen> {
   late final bool _isSearch = widget.search;
-  late final String _tag = 'products-${DateTime.now().microsecondsSinceEpoch}';
+  late final String _tag =
+      'products-${widget.categoryId ?? 'all'}-${DateTime.now().microsecondsSinceEpoch}';
   late final ProductGetxController c = Get.put(
     ProductGetxController(
       categoryId: widget.categoryId,
@@ -145,27 +146,30 @@ class _ProductsScreenState extends State<ProductScreen> {
                     onRetry: c.fetchProducts,
                   );
                 }
-                if (c.productsList.isEmpty) {
-                  return EmptyView(
-                    icon: Icons.search_off_rounded,
-                    title: 'لا توجد نتائج',
-                    body: c.activeFilters > 0
-                        ? 'جرّبي تخفيف الفلاتر.'
-                        : 'جرّبي كلمة بحث أخرى.',
+                return Obx(() {
+                  if (c.productsList.isEmpty) {
+                    return EmptyView(
+                      icon: Icons.search_off_rounded,
+                      title: 'لا توجد نتائج',
+                      body: c.activeFilters > 0
+                          ? 'جرّبي تخفيف الفلاتر.'
+                          : 'جرّبي كلمة بحث أخرى.',
+                    );
+                  }
+                  return RefreshIndicator(
+                    onRefresh: c.fetchProducts,
+                    child: ProductGrid(
+                      controller: _scroll,
+                      bottom: 40 + MediaQuery.paddingOf(context).bottom,
+                      itemCount:
+                          c.productsList.length +
+                          (c.isLoadingMore.value ? 2 : 0),
+                      itemBuilder: (_, i) => i >= c.productsList.length
+                          ? const SkeletonShimmer(child: ProductCardSkeleton())
+                          : ProductCard(c.productsList[i], heroPrefix: _tag),
+                    ),
                   );
-                }
-                return RefreshIndicator(
-                  onRefresh: c.fetchProducts,
-                  child: ProductGrid(
-                    controller: _scroll,
-                    bottom: 40 + MediaQuery.paddingOf(context).bottom,
-                    itemCount:
-                        c.productsList.length + (c.isLoadingMore.value ? 2 : 0),
-                    itemBuilder: (_, i) => i >= c.productsList.length
-                        ? const SkeletonShimmer(child: ProductCardSkeleton())
-                        : ProductCard(c.productsList[i], heroPrefix: _tag),
-                  ),
-                );
+                });
               }),
             ),
           ],

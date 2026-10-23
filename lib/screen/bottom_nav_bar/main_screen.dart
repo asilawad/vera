@@ -28,35 +28,43 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shell = Get.put(MainScreenController());
+    final shell = Get.find<MainScreenController>();
     final sideNav = Responsive.useSideNav(context);
-    return Obx(
-      () => PopScope(
-        canPop: shell.index.value == 0,
-        onPopInvokedWithResult: (didPop, _) {
-          if (!didPop) shell.go(0);
-        },
-        child: Scaffold(
-          extendBody: !sideNav,
-          body: sideNav
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    MainSideBar(index: shell.index, onSelect: shell.go),
-                    Expanded(
+    return Scaffold(
+      extendBody: !sideNav,
+      body: sideNav
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                MainSideBar(index: shell.index, onSelect: shell.go),
+                Expanded(
+                  child: Obx(
+                    () => PopScope(
+                      canPop: shell.index.value == 0,
+                      onPopInvokedWithResult: (didPop, _) {
+                        if (!didPop) shell.go(0);
+                      },
                       child: IndexedStack(
                         index: shell.index.value,
                         children: _tabs,
                       ),
                     ),
-                  ],
-                )
-              : IndexedStack(index: shell.index.value, children: _tabs),
-          bottomNavigationBar: sideNav
-              ? null
-              : MainBottomBar(index: shell.index, onSelect: shell.go),
-        ),
-      ),
+                  ),
+                ),
+              ],
+            )
+          : Obx(
+              () => PopScope(
+                canPop: shell.index.value == 0,
+                onPopInvokedWithResult: (didPop, _) {
+                  if (!didPop) shell.go(0);
+                },
+                child: IndexedStack(index: shell.index.value, children: _tabs),
+              ),
+            ),
+      bottomNavigationBar: sideNav
+          ? null
+          : MainBottomBar(index: shell.index, onSelect: shell.go),
     );
   }
 }

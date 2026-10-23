@@ -36,29 +36,40 @@ class FavoritesScreen extends StatelessWidget {
               onAction: () => Get.to(() => const LoginScreen()),
             );
           }
-          if (favorites.isLoading.value && favorites.favoritesList.isEmpty) {
-            return const ProductGridSkeleton();
-          }
-          if (favorites.favoritesList.isEmpty) {
-            return EmptyView(
-              icon: Icons.favorite_border_rounded,
-              title: 'لا توجد منتجات في المفضلة',
-              body: 'اضغطي على ♡ في أي منتج لحفظه هنا.',
-              action: 'تصفحي المنتجات',
-              onAction: () => MainScreenController.to.go(0),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: favorites.fetchFavorites,
-            child: ProductGrid(
-              bottom: Responsive.bottomClearance(context),
-              itemCount: favorites.favoritesList.length,
-              itemBuilder: (_, i) =>
-                  ProductCard(favorites.favoritesList[i], heroPrefix: 'fav'),
-            ),
-          );
+          return _FavoritesListState(favorites);
         }),
       ),
     );
+  }
+}
+
+class _FavoritesListState extends StatelessWidget {
+  const _FavoritesListState(this.controller);
+
+  final FavoritesGetxController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (controller.favoritesList.isEmpty) {
+        if (controller.isLoading.value) return const ProductGridSkeleton();
+        return EmptyView(
+          icon: Icons.favorite_border_rounded,
+          title: 'لا توجد منتجات في المفضلة',
+          body: 'اضغطي على ♡ في أي منتج لحفظه هنا.',
+          action: 'تصفحي المنتجات',
+          onAction: () => MainScreenController.to.go(0),
+        );
+      }
+      return RefreshIndicator(
+        onRefresh: controller.fetchFavorites,
+        child: ProductGrid(
+          bottom: Responsive.bottomClearance(context),
+          itemCount: controller.favoritesList.length,
+          itemBuilder: (_, i) =>
+              ProductCard(controller.favoritesList[i], heroPrefix: 'fav'),
+        ),
+      );
+    });
   }
 }

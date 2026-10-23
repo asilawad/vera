@@ -85,32 +85,45 @@ class _OrdersScreenState extends State<OrderScreen> {
               onRetry: c.fetchOrders,
             );
           }
-          if (c.ordersList.isEmpty) {
-            return EmptyView(
-              icon: Icons.receipt_long_outlined,
-              title: 'لا توجد طلبات بعد',
-              body: 'عندما تطلبين، ستجدين طلباتك وتتبعها هنا.',
-              action: 'تسوّقي الآن',
-              onAction: Get.back,
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: c.fetchOrders,
-            child: ListView.separated(
-              padding: centeredPadding(
-                MediaQuery.sizeOf(context).width,
-                maxWidth: Responsive.readingMaxWidth,
-                top: 20,
-                bottom: 20 + MediaQuery.paddingOf(context).bottom,
-              ),
-              itemCount: c.ordersList.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (_, i) => _OrderCard(c.ordersList[i]),
-            ),
-          );
+          return _OrdersListState(c);
         }),
       ),
     );
+  }
+}
+
+class _OrdersListState extends StatelessWidget {
+  const _OrdersListState(this.controller);
+
+  final OrderGetxController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (controller.ordersList.isEmpty) {
+        return EmptyView(
+          icon: Icons.receipt_long_outlined,
+          title: 'لا توجد طلبات بعد',
+          body: 'عندما تطلبين، ستجدين طلباتك وتتبعها هنا.',
+          action: 'تسوّقي الآن',
+          onAction: Get.back,
+        );
+      }
+      return RefreshIndicator(
+        onRefresh: controller.fetchOrders,
+        child: ListView.separated(
+          padding: centeredPadding(
+            MediaQuery.sizeOf(context).width,
+            maxWidth: Responsive.readingMaxWidth,
+            top: 20,
+            bottom: 20 + MediaQuery.paddingOf(context).bottom,
+          ),
+          itemCount: controller.ordersList.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
+          itemBuilder: (_, i) => _OrderCard(controller.ordersList[i]),
+        ),
+      );
+    });
   }
 }
 
@@ -129,6 +142,7 @@ class _OrderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         onTap: () async {
           await Get.to(() => OrderDetailsScreen(id: order.id));
+          if (!context.mounted) return;
           Get.find<OrderGetxController>().fetchOrders();
         },
         child: Container(

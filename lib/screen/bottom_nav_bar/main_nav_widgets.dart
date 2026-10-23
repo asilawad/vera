@@ -39,7 +39,7 @@ class MainBottomBar extends StatelessWidget {
       child: Align(
         heightFactor: 1,
         child: Container(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             minHeight: AppSizes.bottomNavigationHeight,
             maxWidth: AppSizes.bottomNavigationMaxWidth,
           ),

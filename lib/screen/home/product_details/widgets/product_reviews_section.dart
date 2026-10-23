@@ -51,7 +51,7 @@ class ProductReviewsSection extends StatelessWidget {
                 Icons.rate_review_outlined,
                 size: AppSizes.compactIcon,
               ),
-              label: Text(AppStrings.addReview),
+              label: const Text(AppStrings.addReview),
             ),
           ],
         ),
@@ -63,7 +63,12 @@ class ProductReviewsSection extends StatelessWidget {
         else ...[
           _ReviewSummaryCard(summary: reviews),
           SizedBox(height: AppSpacing.md),
-          ...reviews.latest.map(ReviewCard.new),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: reviews.latest.length,
+            itemBuilder: (_, index) => ReviewCard(reviews.latest[index]),
+          ),
           if (reviews.count > reviews.latest.length)
             Center(
               child: OutlinedButton.icon(

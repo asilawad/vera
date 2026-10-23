@@ -26,9 +26,10 @@ class _CartCouponBoxState extends State<CartCouponBox> {
 
   Future<void> _apply() async {
     final success = await cart.applyCoupon(_code.text);
+    if (!mounted) return;
     if (success) {
       _code.clear();
-      if (mounted) FocusScope.of(context).unfocus();
+      FocusScope.of(context).unfocus();
     }
   }
 

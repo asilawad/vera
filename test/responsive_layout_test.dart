@@ -285,7 +285,7 @@ Future<void> runCase(
       await tester.pumpWidget(
         RepaintBoundary(
           key: _shotKey,
-          child: AnaqaApp(home: c.build()),
+          child: VeraApp(home: c.build()),
         ),
       );
       for (var i = 0; i < 4; i++) {

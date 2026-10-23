@@ -27,57 +27,69 @@ class HomeScreen extends StatelessWidget {
         bottom: false,
         child: Obx(() {
           if (home.isLoading.value) return const HomeSkeleton();
-          if (home.errorMessage.value.isNotEmpty &&
-              home.featured.isEmpty &&
-              home.newest.isEmpty) {
-            return ErrorView(
-              message: home.errorMessage.value,
-              onRetry: home.fetchHome,
-            );
+          if (home.errorMessage.value.isNotEmpty) {
+            return Obx(() {
+              if (home.featured.isEmpty && home.newest.isEmpty) {
+                return ErrorView(
+                  message: home.errorMessage.value,
+                  onRetry: home.fetchHome,
+                );
+              }
+              return _HomeFeed(home);
+            });
           }
-          return RefreshIndicator(
-            onRefresh: home.fetchHome,
-            child: CustomScrollView(
-              slivers: [
-                const HomeSliverBox(child: HomeHeader()),
-                HomeSliverBox(
-                  child: AppSearchBar(
-                    hint: AppStrings.homeSearchHint,
-                    onTap: () => Get.to(
-                      () => const ProductScreen(
-                        title: AppStrings.homeSearch,
-                        search: true,
-                      ),
-                    ),
-                  ),
-                ),
-                HomeBannerCarousel(controller: home),
-                HomeCategoriesSection(controller: home),
-                HomeHorizontalSection(
-                  products: home.featured,
-                  title: AppStrings.homeFeatured,
-                  subtitle: AppStrings.homeFeaturedSubtitle,
-                  hero: AppStrings.heroFeatured,
-                  featured: true,
-                ),
-                HomeNewestSection(controller: home),
-                HomeHorizontalSection(
-                  products: home.bestSellers,
-                  title: AppStrings.homeBestSellers,
-                  subtitle: AppStrings.homeBestSellersSubtitle,
-                  hero: AppStrings.heroBestSellers,
-                  sort: AppStrings.sortBestSelling,
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: Responsive.bottomClearance(context, AppSpacing.xl),
-                  ),
-                ),
-              ],
-            ),
-          );
+          return _HomeFeed(home);
         }),
       ),
     );
   }
+}
+
+class _HomeFeed extends StatelessWidget {
+  const _HomeFeed(this.controller);
+
+  final HomeGetxController controller;
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator(
+    onRefresh: controller.fetchHome,
+    child: CustomScrollView(
+      slivers: [
+        const HomeSliverBox(child: HomeHeader()),
+        HomeSliverBox(
+          child: AppSearchBar(
+            hint: AppStrings.homeSearchHint,
+            onTap: () => Get.to(
+              () => const ProductScreen(
+                title: AppStrings.homeSearch,
+                search: true,
+              ),
+            ),
+          ),
+        ),
+        HomeBannerCarousel(controller: controller),
+        HomeCategoriesSection(controller: controller),
+        HomeHorizontalSection(
+          products: controller.featured,
+          title: AppStrings.homeFeatured,
+          subtitle: AppStrings.homeFeaturedSubtitle,
+          hero: AppStrings.heroFeatured,
+          featured: true,
+        ),
+        HomeNewestSection(controller: controller),
+        HomeHorizontalSection(
+          products: controller.bestSellers,
+          title: AppStrings.homeBestSellers,
+          subtitle: AppStrings.homeBestSellersSubtitle,
+          hero: AppStrings.heroBestSellers,
+          sort: AppStrings.sortBestSelling,
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: Responsive.bottomClearance(context, AppSpacing.xl),
+          ),
+        ),
+      ],
+    ),
+  );
 }

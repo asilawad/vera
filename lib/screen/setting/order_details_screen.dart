@@ -57,191 +57,204 @@ class _OrderScreenState extends State<OrderDetailsScreen> {
       ),
     );
     if (ok != true) return;
+    if (!mounted) return;
     await _orderController.cancelOrder(id: widget.id);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final o = _orderController.orderDetails.value;
-      final cancelling = _orderController.isCancelling.value;
-      return _buildBody(o, cancelling);
-    });
+    return _buildBody();
   }
 
-  Widget _buildBody(Order? o, bool cancelling) {
+  Widget _buildBody() {
     return Scaffold(
-      appBar: GlassAppBar(title: Text(o?.number ?? 'تفاصيل الطلب')),
-      extendBodyBehindAppBar: true,
-      body: Padding(
-        padding: EdgeInsetsDirectional.only(
-          top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(AppSizes.appBarHeight),
+        child: GlassAppBar(
+          title: Obx(
+            () => Text(
+              _orderController.orderDetails.value?.number ?? 'تفاصيل الطلب',
+            ),
+          ),
         ),
-        child: o == null
-            ? (_orderController.detailsErrorMessage.value.isNotEmpty
-                  ? ErrorView(
-                      message: _orderController.detailsErrorMessage.value,
-                      onRetry: _load,
-                    )
-                  : const OrderDetailsSkeleton())
-            : RefreshIndicator(
-                onRefresh: _load,
-                child: ListView(
-                  padding: centeredPadding(
-                    MediaQuery.sizeOf(context).width,
-                    maxWidth: Responsive.readingMaxWidth,
-                    top: 8,
-                    bottom: 40 + MediaQuery.paddingOf(context).bottom,
-                  ),
-                  children: [
-                    _StatusHero(o),
-                    const SizedBox(height: 18),
-                    _Card(
-                      title: 'تتبّع الطلب',
-                      child: _Timeline(
-                        o.timeline,
-                        cancelled: o.status == 'cancelled',
-                      ),
+      ),
+      extendBodyBehindAppBar: true,
+      body: Obx(() {
+        final o = _orderController.orderDetails.value;
+        return Padding(
+          padding: EdgeInsetsDirectional.only(
+            top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+          ),
+          child: o == null
+              ? (_orderController.detailsErrorMessage.value.isNotEmpty
+                    ? ErrorView(
+                        message: _orderController.detailsErrorMessage.value,
+                        onRetry: _load,
+                      )
+                    : const OrderDetailsSkeleton())
+              : RefreshIndicator(
+                  onRefresh: _load,
+                  child: ListView(
+                    padding: centeredPadding(
+                      MediaQuery.sizeOf(context).width,
+                      maxWidth: Responsive.readingMaxWidth,
+                      top: 8,
+                      bottom: 40 + MediaQuery.paddingOf(context).bottom,
                     ),
-                    _Card(
-                      title: 'المنتجات (${o.itemsCount})',
-                      child: Column(
-                        children: o.items
-                            .map(
-                              (i) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: InkWell(
-                                  onTap: i.productId == null
-                                      ? null
-                                      : () => Get.to(
-                                          () => ProductDetailsScreen(
-                                            id: i.productId!,
-                                          ),
-                                        ),
-                                  child: Row(
-                                    children: [
-                                      NetImage(
-                                        i.image,
-                                        width: 58,
-                                        height: 68,
-                                        radius: 12,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              i.name,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                    children: [
+                      _StatusHero(o),
+                      const SizedBox(height: 18),
+                      _Card(
+                        title: 'تتبّع الطلب',
+                        child: _Timeline(
+                          o.timeline,
+                          cancelled: o.status == 'cancelled',
+                        ),
+                      ),
+                      _Card(
+                        title: 'المنتجات (${o.itemsCount})',
+                        child: Column(
+                          children: o.items
+                              .map(
+                                (i) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: InkWell(
+                                    onTap: i.productId == null
+                                        ? null
+                                        : () => Get.to(
+                                            () => ProductDetailsScreen(
+                                              id: i.productId!,
                                             ),
-                                            const SizedBox(height: 3),
-                                            Wrap(
-                                              crossAxisAlignment:
-                                                  WrapCrossAlignment.center,
-                                              children: [
-                                                Text(
-                                                  '${i.quantity} × ${Fmt.money(i.price)}',
-                                                  style: TextStyle(
-                                                    color: AppColors.muted,
-                                                    fontSize: 12.5.sp,
-                                                  ),
+                                          ),
+                                    child: Row(
+                                      children: [
+                                        NetImage(
+                                          i.image,
+                                          width: 58,
+                                          height: 68,
+                                          radius: 12,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                i.name,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
                                                 ),
-                                                if (i.options['size'] != null)
+                                              ),
+                                              const SizedBox(height: 3),
+                                              Wrap(
+                                                crossAxisAlignment:
+                                                    WrapCrossAlignment.center,
+                                                children: [
                                                   Text(
-                                                    '  ·  ${i.options['size']}',
+                                                    '${i.quantity} × ${Fmt.money(i.price)}',
                                                     style: TextStyle(
                                                       color: AppColors.muted,
                                                       fontSize: 12.5.sp,
                                                     ),
                                                   ),
-                                                if (i.options['color'] !=
-                                                    null) ...[
-                                                  const SizedBox(width: 6),
-                                                  Container(
-                                                    width: 12,
-                                                    height: 12,
-                                                    decoration: BoxDecoration(
-                                                      color: Fmt.hex(
-                                                        i.options['color'],
-                                                      ),
-                                                      shape: BoxShape.circle,
-                                                      border: Border.all(
-                                                        color: AppColors.line,
+                                                  if (i.options['size'] != null)
+                                                    Text(
+                                                      '  ·  ${i.options['size']}',
+                                                      style: TextStyle(
+                                                        color: AppColors.muted,
+                                                        fontSize: 12.5.sp,
                                                       ),
                                                     ),
-                                                  ),
+                                                  if (i.options['color'] !=
+                                                      null) ...[
+                                                    const SizedBox(width: 6),
+                                                    Container(
+                                                      width: 12,
+                                                      height: 12,
+                                                      decoration: BoxDecoration(
+                                                        color: Fmt.hex(
+                                                          i.options['color'],
+                                                        ),
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                          color: AppColors.line,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ],
-                                              ],
-                                            ),
-                                          ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        Fmt.money(i.total),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          Fmt.money(i.total),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                      _Card(
+                        title: 'التوصيل',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _Info(Icons.person_outline_rounded, o.customerName),
+                            _Info(Icons.phone_outlined, o.phone, ltr: true),
+                            _Info(Icons.location_on_outlined, o.address),
+                            if (o.notes != null)
+                              _Info(Icons.sticky_note_2_outlined, o.notes!),
+                            _Info(Icons.payments_outlined, o.paymentLabel),
+                          ],
+                        ),
+                      ),
+                      _Card(
+                        title: 'الدفع',
+                        child: Column(
+                          children: [
+                            _Row('المجموع', Fmt.money(o.subtotal)),
+                            if (o.discount > 0)
+                              _Row(
+                                'الخصم${o.couponCode != null ? ' (${o.couponCode})' : ''}',
+                                '- ${Fmt.money(o.discount)}',
+                                color: AppColors.success,
                               ),
-                            )
-                            .toList(),
+                            _Row('التوصيل', Fmt.money(o.deliveryFee)),
+                            const Divider(height: 20),
+                            _Row('الإجمالي', Fmt.money(o.total), bold: true),
+                          ],
+                        ),
                       ),
-                    ),
-                    _Card(
-                      title: 'التوصيل',
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _Info(Icons.person_outline_rounded, o.customerName),
-                          _Info(Icons.phone_outlined, o.phone, ltr: true),
-                          _Info(Icons.location_on_outlined, o.address),
-                          if (o.notes != null)
-                            _Info(Icons.sticky_note_2_outlined, o.notes!),
-                          _Info(Icons.payments_outlined, o.paymentLabel),
-                        ],
-                      ),
-                    ),
-                    _Card(
-                      title: 'الدفع',
-                      child: Column(
-                        children: [
-                          _Row('المجموع', Fmt.money(o.subtotal)),
-                          if (o.discount > 0)
-                            _Row(
-                              'الخصم${o.couponCode != null ? ' (${o.couponCode})' : ''}',
-                              '- ${Fmt.money(o.discount)}',
-                              color: AppColors.success,
+                      if (o.canCancel)
+                        Obx(() {
+                          final cancelling =
+                              _orderController.isCancelling.value;
+                          return OutlinedButton.icon(
+                            onPressed: cancelling ? null : _cancel,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.danger,
+                              side: const BorderSide(color: AppColors.danger),
                             ),
-                          _Row('التوصيل', Fmt.money(o.deliveryFee)),
-                          const Divider(height: 20),
-                          _Row('الإجمالي', Fmt.money(o.total), bold: true),
-                        ],
-                      ),
-                    ),
-                    if (o.canCancel)
-                      OutlinedButton.icon(
-                        onPressed: cancelling ? null : _cancel,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.danger,
-                          side: const BorderSide(color: AppColors.danger),
-                        ),
-                        icon: const Icon(Icons.close_rounded),
-                        label: Text(
-                          cancelling ? 'جارٍ الإلغاء…' : 'إلغاء الطلب',
-                        ),
-                      ),
-                  ],
+                            icon: const Icon(Icons.close_rounded),
+                            label: Text(
+                              cancelling ? 'جارٍ الإلغاء…' : 'إلغاء الطلب',
+                            ),
+                          );
+                        }),
+                    ],
+                  ),
                 ),
-              ),
-      ),
+        );
+      }),
     );
   }
 }
