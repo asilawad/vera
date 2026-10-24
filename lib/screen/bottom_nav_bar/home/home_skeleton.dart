@@ -20,7 +20,7 @@ class HomeSkeleton extends StatelessWidget {
         bottom: AppSpacing.page,
       ),
       children: [
-        const AppSearchBar(hint: AppStrings.homeSearchHint),
+        const AppSearchBar(hint: AppStrings.searchHint),
         SizedBox(height: AppSpacing.md),
         const BannerSkeleton(),
         SizedBox(height: AppSpacing.xl),

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:souqna_anaqa/widget/product_grid.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
+import 'package:souqna_anaqa/utils/app_strings.dart';
 
 import 'package:souqna_anaqa/getx_controller/product_getx_controller.dart';
 import 'package:souqna_anaqa/preferences/user_getstorage.dart';
@@ -89,7 +90,7 @@ class _ProductsScreenState extends State<ProductScreen> {
                 onSubmitted: _submitSearch,
                 onChanged: (v) => setState(() {}),
                 decoration: InputDecoration(
-                  hintText: 'ابحثي عن منتج…',
+                  hintText: AppStrings.searchHint,
                   prefixIcon: const Icon(Icons.search_rounded),
                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
                   suffixIcon: _search.text.isEmpty

@@ -16,7 +16,7 @@ class AppStrings {
   static const recommendations = 'قد يعجبك أيضًا';
   static const seeAll = 'عرض الكل';
   static const categoryAll = 'الكل';
-  static const homeSearchHint = 'ابحثي عن فستان، عباية، حقيبة…';
+  static const searchHint = 'ابحث عن شنطة أو حقيبة…';
   static const homeSearch = 'البحث';
   static const homeGreetingMorning = 'صباح الخير';
   static const homeGreetingDay = 'نهارك سعيد';

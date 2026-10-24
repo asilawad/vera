@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:souqna_anaqa/getx_controller/app_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/home_getx_controller.dart';
 import 'package:souqna_anaqa/models/banner_item.dart';
 import 'package:souqna_anaqa/screen/bottom_nav_bar/home/home_banner_slide.dart';
@@ -16,6 +17,7 @@ import 'package:souqna_anaqa/utils/app_motion.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/widget/animated_dots.dart';
+import 'package:souqna_anaqa/widget/brand_cover_banner.dart';
 
 class HomeBannerCarousel extends StatefulWidget {
   const HomeBannerCarousel({super.key, required this.controller});
@@ -95,7 +97,10 @@ class _HomeBannerCarouselState extends State<HomeBannerCarousel> {
   Widget build(BuildContext context) {
     return Obx(() {
       final banners = widget.controller.banners.toList();
-      if (banners.isEmpty) return const SliverToBoxAdapter(child: SizedBox());
+      if (banners.isEmpty) {
+        final cover = Get.find<AppGetxController>().store.value?.cover;
+        return HomeSliverBox(child: BrandCoverBanner(imageUrl: cover));
+      }
       return HomeSliverBox(
         child: LayoutBuilder(
           builder: (context, constraints) {

@@ -10,6 +10,7 @@ void main() {
       AppAssets.adaptiveForeground,
       AppAssets.monochrome,
       AppAssets.splashLogo,
+      AppAssets.cover,
       AppAssets.logoMark,
       AppAssets.logoIcon,
       AppAssets.headerLogo,

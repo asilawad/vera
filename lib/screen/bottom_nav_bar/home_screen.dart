@@ -58,7 +58,7 @@ class _HomeFeed extends StatelessWidget {
         const HomeSliverBox(child: HomeHeader()),
         HomeSliverBox(
           child: AppSearchBar(
-            hint: AppStrings.homeSearchHint,
+            hint: AppStrings.searchHint,
             onTap: () => Get.to(
               () => const ProductScreen(
                 title: AppStrings.homeSearch,

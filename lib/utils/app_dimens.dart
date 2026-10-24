@@ -84,6 +84,7 @@ class AppSizes {
   static double get homeHeaderLogo => 48.r;
   static double get homeBellButton => 44.r;
   static double get homeSearchHeight => 54.h;
+  static const int coverDecodeWidth = 1200;
   static double get homeBannerPageGap => 5.w;
   static double get homeBannerTopSpace => 14.h;
   static double get homeBannerDotsGap => 10.h;
