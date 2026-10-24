@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Single home for Vera brand constants (name, slogan, logo, colors, splash sizes).
+/// Single home for Vera brand text, colors, and splash sizing.
 class AppBrand {
   AppBrand._();
 
@@ -8,8 +8,7 @@ class AppBrand {
   static const String tagline = 'جودة تحملها معك';
   static const String retry = 'إعادة المحاولة';
 
-  static const String logoMark = 'assets/brand/adaptive_foreground.png';
-  static const String logoIcon = 'assets/brand/app_icon.png';
+  static const Color splashBackground = Color(0xFF570E20);
 
   static const Color burgundy = Color(0xFF7A1F36);
   static const Color gold = Color(0xFFC9A24B);
@@ -22,6 +21,8 @@ class AppBrand {
   // Splash
   static const Duration splashMinDuration = Duration(milliseconds: 1400);
   static const Duration splashAnimDuration = Duration(milliseconds: 900);
+  static const double splashRevealStart = 0;
+  static const double splashRevealEnd = 1;
   static const Curve splashCurve = Curves.easeOutBack;
   static const double splashScaleStart = 0.85;
   static const double splashLogoSize = 150;

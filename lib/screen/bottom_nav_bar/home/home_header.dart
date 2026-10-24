@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:souqna_anaqa/getx_controller/app_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/user_profile_getx_controller.dart';
-import 'package:souqna_anaqa/utils/app_brand.dart';
+import 'package:souqna_anaqa/utils/app_assets.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
@@ -40,7 +40,7 @@ class HomeHeader extends StatelessWidget {
               child: Obx(() {
                 final logo = storeController.store.value?.logo;
                 return logo == null || logo.isEmpty
-                    ? Image.asset(AppBrand.logoIcon, fit: BoxFit.cover)
+                    ? Image.asset(AppAssets.headerLogo, fit: BoxFit.cover)
                     : NetImage(logo);
               }),
             ),
