@@ -13,6 +13,7 @@ import 'package:souqna_anaqa/getx_controller/home_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/order_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/user_profile_getx_controller.dart';
 import 'package:souqna_anaqa/screen/lunch/lunch_screen.dart';
+import 'package:souqna_anaqa/screen/bottom_nav_bar/main_screen.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/app_brand.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
@@ -31,7 +32,7 @@ Future<void> main() async {
   // نسجّل الكنترولرز قبل runApp لأن الثيم يقرأ لون المتجر من AppGetxController.
   InitialBinding().dependencies();
 
-  runApp(const AnaqaApp());
+  runApp(const VeraApp());
 }
 
 class InitialBinding implements Bindings {
@@ -45,11 +46,12 @@ class InitialBinding implements Bindings {
     Get.put(AppGetxController(), permanent: true);
 
     Get.lazyPut(() => HomeGetxController(), fenix: true);
+    Get.lazyPut(() => MainScreenController(), fenix: true);
   }
 }
 
-class AnaqaApp extends StatelessWidget {
-  const AnaqaApp({super.key, this.home = const LunchScreen()});
+class VeraApp extends StatelessWidget {
+  const VeraApp({super.key, this.home = const LunchScreen()});
 
   /// الشاشة الأولى؛ اختبارات التخطيط تمرّر شاشات أخرى بنفس الثيم وتهيئة ScreenUtil.
   final Widget home;

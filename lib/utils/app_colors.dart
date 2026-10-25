@@ -22,6 +22,7 @@ class AppColors {
   static const Color surface = Colors.white;
   static const Color white = Colors.white;
   static const Color whiteMuted = Color(0x8AFFFFFF);
+  static const Color whiteSubtle = Color(0x99FFFFFF);
   static const Color transparent = Colors.transparent;
   static const Color shadow = Color(0x14000000);
   static const Color sand = Color(0xFFF3EBE4);
@@ -32,6 +33,14 @@ class AppColors {
   static const Color danger = Color(0xFFC62828);
   static const Color warning = Color(0xFFD9822B);
   static const Color dangerSurface = Color(0x1AC62828);
+  static const Color unavailableProductOverlay = Color(0x8CFFFFFF);
+  static const Color favoriteSurface = Color(0xEBFFFFFF);
+
+  static const Color glassSurface = Color(0xB8FAF5EE);
+  static const Color glassSurfaceStrong = Color(0xE0FAF5EE);
+  static const Color glassBorder = Color(0x8CFFFFFF);
+  static const Color shimmerBase = sand;
+  static const Color shimmerHighlight = Color(0xFFFFFCF8);
 }
 
 class AppTheme {

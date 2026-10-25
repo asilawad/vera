@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:souqna_anaqa/models/product.dart';
 import 'package:souqna_anaqa/screen/home/product_details/widgets/add_to_cart_button.dart';
-import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/widget/quantity_stepper.dart';
+import 'package:souqna_anaqa/widget/glass_container.dart';
 
 class ProductBottomBar extends StatelessWidget {
   const ProductBottomBar({
@@ -16,6 +16,7 @@ class ProductBottomBar extends StatelessWidget {
     required this.quantity,
     required this.onQuantityChanged,
     required this.isSubmitting,
+    required this.isAdded,
     required this.onAddToCart,
   });
 
@@ -23,26 +24,19 @@ class ProductBottomBar extends StatelessWidget {
   final int quantity;
   final ValueChanged<int> onQuantityChanged;
   final bool isSubmitting;
+  final bool isAdded;
   final VoidCallback onAddToCart;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassContainer(
+      radius: AppRadius.none,
+      strong: true,
       padding: EdgeInsetsDirectional.fromSTEB(
         AppSpacing.page,
         AppSpacing.barVertical,
         AppSpacing.page,
         AppSpacing.barVertical + MediaQuery.paddingOf(context).bottom,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: AppSizes.bottomBarShadowBlur,
-            offset: Offset(0, -AppSpacing.xs),
-          ),
-        ],
       ),
       child: MaxWidthBox(
         maxWidth: Responsive.readingMaxWidth,
@@ -61,6 +55,7 @@ class ProductBottomBar extends StatelessWidget {
                   final button = AddToCartButton(
                     label: label,
                     isSubmitting: isSubmitting,
+                    isAdded: isAdded,
                     onPressed: onAddToCart,
                   );
                   if (!_labelFits(context, label, constraints.maxWidth)) {

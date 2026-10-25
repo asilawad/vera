@@ -12,6 +12,8 @@ import 'package:souqna_anaqa/screen/auth/login_screen.dart';
 import 'package:souqna_anaqa/screen/home/store_details_screen.dart';
 import 'package:souqna_anaqa/screen/setting/more/edit_profile_screen.dart';
 import 'package:souqna_anaqa/screen/setting/order_screen.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -21,144 +23,151 @@ class MoreScreen extends StatelessWidget {
     final UserProfileGetxController profile = Get.find();
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
-      appBar: AppBar(title: const Text('حسابي')),
-      body: Obx(() {
-        final customer = profile.userProfile.value;
-        if (customer == null) {
-          return EmptyView(
-            icon: Icons.person_outline_rounded,
-            title: 'أهلًا بكِ في متجرنا',
-            body: 'سجّلي الدخول لمتابعة طلباتك وحفظ مفضلتك.',
-            action: 'تسجيل الدخول',
-            onAction: () => Get.to(() => const LoginScreen()),
-          );
-        }
-        return ListView(
-          padding: centeredPadding(
-            MediaQuery.sizeOf(context).width,
-            maxWidth: Responsive.readingMaxWidth,
-            top: 8,
-            bottom: Responsive.bottomClearance(context),
-          ),
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.ink,
-                borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.ink,
-                    Color.lerp(AppColors.ink, primary, 0.35)!,
-                  ],
+      appBar: const GlassAppBar(title: Text('حسابي')),
+      extendBodyBehindAppBar: true,
+      body: Padding(
+        padding: EdgeInsetsDirectional.only(
+          top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+        ),
+        child: Obx(() {
+          final customer = profile.userProfile.value;
+          if (customer == null) {
+            return EmptyView(
+              icon: Icons.person_outline_rounded,
+              title: 'أهلًا بكِ في متجرنا',
+              body: 'سجّلي الدخول لمتابعة طلباتك وحفظ مفضلتك.',
+              action: 'تسجيل الدخول',
+              onAction: () => Get.to(() => const LoginScreen()),
+            );
+          }
+          return ListView(
+            padding: centeredPadding(
+              MediaQuery.sizeOf(context).width,
+              maxWidth: Responsive.readingMaxWidth,
+              top: 8,
+              bottom: Responsive.bottomClearance(context),
+            ),
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.ink,
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.ink,
+                      Color.lerp(AppColors.ink, primary, 0.35)!,
+                    ],
+                  ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 32.r,
-                    backgroundColor: primary,
-                    child: Text(
-                      customer.initials,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.w700,
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 32.r,
+                      backgroundColor: primary,
+                      child: Text(
+                        customer.initials,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          customer.name,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        // البريد بلا مسافات فلا يلتف، فنقصّ نهايته إن طال جدًا.
-                        Text(
-                          customer.email,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.65),
-                            fontSize: 13.sp,
-                          ),
-                        ),
-                        if (customer.phone != null)
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            customer.phone!,
+                            customer.name,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          // البريد بلا مسافات فلا يلتف، فنقصّ نهايته إن طال جدًا.
+                          Text(
+                            customer.email,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             textDirection: TextDirection.ltr,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.65),
                               fontSize: 13.sp,
                             ),
                           ),
+                          if (customer.phone != null)
+                            Text(
+                              customer.phone!,
+                              textDirection: TextDirection.ltr,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.65),
+                                fontSize: 13.sp,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              _Tile(
+                icon: Icons.receipt_long_outlined,
+                title: 'طلباتي',
+                subtitle: 'تتبعي حالة طلباتك',
+                onTap: () => Get.to(() => const OrderScreen()),
+              ),
+              _Tile(
+                icon: Icons.favorite_border_rounded,
+                title: 'المفضلة',
+                onTap: () => MainScreenController.to.go(3),
+              ),
+              _Tile(
+                icon: Icons.edit_outlined,
+                title: 'تعديل بياناتي',
+                onTap: () => Get.to(() => const EditProfileScreen()),
+              ),
+              _Tile(
+                icon: Icons.storefront_outlined,
+                title: 'عن المتجر وتواصل معنا',
+                onTap: () => Get.to(() => const StoreDetailsScreen()),
+              ),
+              const SizedBox(height: 10),
+              _Tile(
+                icon: Icons.logout_rounded,
+                title: 'تسجيل الخروج',
+                danger: true,
+                onTap: () async {
+                  final ok = await Get.dialog<bool>(
+                    AlertDialog(
+                      title: const Text('تسجيل الخروج'),
+                      content: const Text('هل تريدين تسجيل الخروج من حسابك؟'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Get.back(result: false),
+                          child: const Text('إلغاء'),
+                        ),
+                        TextButton(
+                          onPressed: () => Get.back(result: true),
+                          child: const Text(
+                            'خروج',
+                            style: TextStyle(color: AppColors.danger),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ],
+                  );
+                  if (!context.mounted) return;
+                  if (ok == true) await UserApiController().logout();
+                },
               ),
-            ),
-            const SizedBox(height: 20),
-            _Tile(
-              icon: Icons.receipt_long_outlined,
-              title: 'طلباتي',
-              subtitle: 'تتبعي حالة طلباتك',
-              onTap: () => Get.to(() => const OrderScreen()),
-            ),
-            _Tile(
-              icon: Icons.favorite_border_rounded,
-              title: 'المفضلة',
-              onTap: () => MainScreenController.to.go(3),
-            ),
-            _Tile(
-              icon: Icons.edit_outlined,
-              title: 'تعديل بياناتي',
-              onTap: () => Get.to(() => const EditProfileScreen()),
-            ),
-            _Tile(
-              icon: Icons.storefront_outlined,
-              title: 'عن المتجر وتواصل معنا',
-              onTap: () => Get.to(() => const StoreDetailsScreen()),
-            ),
-            const SizedBox(height: 10),
-            _Tile(
-              icon: Icons.logout_rounded,
-              title: 'تسجيل الخروج',
-              danger: true,
-              onTap: () async {
-                final ok = await Get.dialog<bool>(
-                  AlertDialog(
-                    title: const Text('تسجيل الخروج'),
-                    content: const Text('هل تريدين تسجيل الخروج من حسابك؟'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Get.back(result: false),
-                        child: const Text('إلغاء'),
-                      ),
-                      TextButton(
-                        onPressed: () => Get.back(result: true),
-                        child: const Text(
-                          'خروج',
-                          style: TextStyle(color: AppColors.danger),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-                if (ok == true) await UserApiController().logout();
-              },
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        }),
+      ),
     );
   }
 }

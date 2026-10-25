@@ -4,25 +4,42 @@ import 'package:get/get.dart';
 import 'package:souqna_anaqa/getx_controller/user_profile_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/favorites_getx_controller.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
+import 'package:souqna_anaqa/utils/app_motion.dart';
 import 'package:souqna_anaqa/models/product.dart';
+import 'package:souqna_anaqa/widget/glass_container.dart';
 
 /// قلب المفضلة مع حركة نبض.
 class FavoriteIcon extends StatelessWidget {
-  const FavoriteIcon(this.product, {super.key, this.size = 36});
+  const FavoriteIcon(
+    this.product, {
+    super.key,
+    this.size = 36,
+    this.glass = false,
+  });
 
   final Product product;
   final double size;
+  final bool glass;
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       final active = Get.find<FavoritesGetxController>().isFavorite(product.id);
-      return Material(
-        color: Colors.white.withValues(alpha: 0.92),
-        shape: const CircleBorder(),
+      final duration = MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : AppMotion.fast;
+      final shape = glass
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.chip),
+            )
+          : const CircleBorder();
+      final button = Material(
+        color: glass ? AppColors.transparent : AppColors.favoriteSurface,
+        shape: shape,
         elevation: 0,
         child: InkWell(
-          customBorder: const CircleBorder(),
+          customBorder: shape,
           onTap: () async {
             final UserProfileGetxController profile = Get.find();
             if (!await profile.ensureLoggedIn()) return;
@@ -32,19 +49,31 @@ class FavoriteIcon extends StatelessWidget {
             width: size,
             height: size,
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : AppMotion.normal,
               transitionBuilder: (child, anim) =>
                   ScaleTransition(scale: anim, child: child),
-              child: Icon(
-                active ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                key: ValueKey(active),
-                size: size * 0.52,
-                color: active ? AppColors.danger : AppColors.ink,
+              child: AnimatedScale(
+                scale: active ? AppSizes.favoritePopScale : 1,
+                duration: duration,
+                curve: AppMotion.bounce,
+                child: Icon(
+                  active
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                  key: ValueKey(active),
+                  size: size * AppSizes.favoriteIconScale,
+                  color: active ? AppColors.danger : AppColors.ink,
+                ),
               ),
             ),
           ),
         ),
       );
+      return glass
+          ? GlassContainer(radius: AppRadius.chip, child: button)
+          : button;
     });
   }
 }

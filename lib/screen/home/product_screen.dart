@@ -3,13 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:souqna_anaqa/widget/product_grid.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
+import 'package:souqna_anaqa/utils/app_strings.dart';
 
 import 'package:souqna_anaqa/getx_controller/product_getx_controller.dart';
 import 'package:souqna_anaqa/preferences/user_getstorage.dart';
-import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/widget/product_card.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/states.dart';
+import 'package:souqna_anaqa/widget/vera_chip.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 /// قائمة المنتجات: قسم، بحث، أو مختارات — مع ترتيب وفلاتر وتحميل لا نهائي.
 class ProductScreen extends StatefulWidget {
@@ -34,7 +37,8 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductsScreenState extends State<ProductScreen> {
   late final bool _isSearch = widget.search;
-  late final String _tag = 'products-${DateTime.now().microsecondsSinceEpoch}';
+  late final String _tag =
+      'products-${widget.categoryId ?? 'all'}-${DateTime.now().microsecondsSinceEpoch}';
   late final ProductGetxController c = Get.put(
     ProductGetxController(
       categoryId: widget.categoryId,
@@ -77,7 +81,7 @@ class _ProductsScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: GlassAppBar(
         title: _isSearch
             ? TextField(
                 controller: _search,
@@ -86,7 +90,7 @@ class _ProductsScreenState extends State<ProductScreen> {
                 onSubmitted: _submitSearch,
                 onChanged: (v) => setState(() {}),
                 decoration: InputDecoration(
-                  hintText: 'ابحثي عن منتج…',
+                  hintText: AppStrings.searchHint,
                   prefixIcon: const Icon(Icons.search_rounded),
                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
                   suffixIcon: _search.text.isEmpty
@@ -102,66 +106,75 @@ class _ProductsScreenState extends State<ProductScreen> {
               )
             : Text(widget.title),
       ),
-      body: Column(
-        children: [
-          _Toolbar(c: c, onFilters: () => _openFilters(context)),
-          if (_isSearch && _search.text.isEmpty && _recent.isNotEmpty)
-            Padding(
-              padding: centeredPadding(
-                MediaQuery.sizeOf(context).width,
-                top: 4,
-                bottom: 8,
-              ),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _recent
-                    .map(
-                      (r) => ActionChip(
-                        avatar: const Icon(Icons.history_rounded, size: 16),
-                        label: Text(r),
-                        onPressed: () {
-                          _search.text = r;
-                          _submitSearch(r);
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-          Expanded(
-            child: Obx(() {
-              if (c.isLoading.value) return const ProductGridSkeleton();
-              if (c.errorMessage.value.isNotEmpty) {
-                return ErrorView(
-                  message: c.errorMessage.value,
-                  onRetry: c.fetchProducts,
-                );
-              }
-              if (c.productsList.isEmpty) {
-                return EmptyView(
-                  icon: Icons.search_off_rounded,
-                  title: 'لا توجد نتائج',
-                  body: c.activeFilters > 0
-                      ? 'جرّبي تخفيف الفلاتر.'
-                      : 'جرّبي كلمة بحث أخرى.',
-                );
-              }
-              return RefreshIndicator(
-                onRefresh: c.fetchProducts,
-                child: ProductGrid(
-                  controller: _scroll,
-                  bottom: 40 + MediaQuery.paddingOf(context).bottom,
-                  itemCount:
-                      c.productsList.length + (c.isLoadingMore.value ? 2 : 0),
-                  itemBuilder: (_, i) => i >= c.productsList.length
-                      ? const ProductCardSkeleton()
-                      : ProductCard(c.productsList[i], heroPrefix: _tag),
+      extendBodyBehindAppBar: true,
+      body: Padding(
+        padding: EdgeInsetsDirectional.only(
+          top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+        ),
+        child: Column(
+          children: [
+            _Toolbar(c: c, onFilters: () => _openFilters(context)),
+            if (_isSearch && _search.text.isEmpty && _recent.isNotEmpty)
+              Padding(
+                padding: centeredPadding(
+                  MediaQuery.sizeOf(context).width,
+                  top: 4,
+                  bottom: 8,
                 ),
-              );
-            }),
-          ),
-        ],
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _recent
+                      .map(
+                        (r) => ActionChip(
+                          avatar: const Icon(Icons.history_rounded, size: 16),
+                          label: Text(r),
+                          onPressed: () {
+                            _search.text = r;
+                            _submitSearch(r);
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            Expanded(
+              child: Obx(() {
+                if (c.isLoading.value) return const ProductGridSkeleton();
+                if (c.errorMessage.value.isNotEmpty) {
+                  return ErrorView(
+                    message: c.errorMessage.value,
+                    onRetry: c.fetchProducts,
+                  );
+                }
+                return Obx(() {
+                  if (c.productsList.isEmpty) {
+                    return EmptyView(
+                      icon: Icons.search_off_rounded,
+                      title: 'لا توجد نتائج',
+                      body: c.activeFilters > 0
+                          ? 'جرّبي تخفيف الفلاتر.'
+                          : 'جرّبي كلمة بحث أخرى.',
+                    );
+                  }
+                  return RefreshIndicator(
+                    onRefresh: c.fetchProducts,
+                    child: ProductGrid(
+                      controller: _scroll,
+                      bottom: 40 + MediaQuery.paddingOf(context).bottom,
+                      itemCount:
+                          c.productsList.length +
+                          (c.isLoadingMore.value ? 2 : 0),
+                      itemBuilder: (_, i) => i >= c.productsList.length
+                          ? const SkeletonShimmer(child: ProductCardSkeleton())
+                          : ProductCard(c.productsList[i], heroPrefix: _tag),
+                    ),
+                  );
+                });
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -315,16 +328,10 @@ class _Toolbar extends StatelessWidget {
               final active = c.sort.value == s.$1 && c.order.value == s.$2;
               return Padding(
                 padding: const EdgeInsetsDirectional.only(end: 8),
-                child: ChoiceChip(
-                  label: Text(s.$3),
+                child: VeraChip(
+                  label: s.$3,
                   selected: active,
-                  showCheckmark: false,
-                  selectedColor: AppColors.ink,
-                  labelStyle: TextStyle(
-                    color: active ? Colors.white : AppColors.ink,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  onSelected: (_) => c.setSort(s.$1, s.$2),
+                  onTap: () => c.setSort(s.$1, s.$2),
                 ),
               );
             }),

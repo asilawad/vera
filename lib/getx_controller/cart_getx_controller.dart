@@ -1,20 +1,29 @@
-import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:souqna_anaqa/api/api_settings.dart';
+import 'package:souqna_anaqa/getx_controller/cart_controller_state.dart';
 import 'package:souqna_anaqa/models/cart.dart';
 import 'package:souqna_anaqa/preferences/user_getstorage.dart';
+import 'package:souqna_anaqa/repositories/cart/api_cart_repository.dart';
+import 'package:souqna_anaqa/repositories/cart/cart_repository.dart';
+import 'package:souqna_anaqa/repositories/cart/cart_result.dart';
+import 'package:souqna_anaqa/utils/app_strings.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
 
-/// السلة: كل عملية ترجع الملخص الكامل من الخادم (المجموع، الخصم، التوصيل، الإجمالي).
+part 'cart_getx_controller_actions.dart';
+
 class CartGetxController extends GetxController {
-  var isLoading = false.obs;
-  var isSubmitting = false.obs;
-  var summary = CartSummary().obs;
+  CartGetxController({
+    CartRepository? repository,
+    void Function({required String message, bool error})? notify,
+  }) : _repository = repository ?? ApiCartRepository(),
+       _notify = notify ?? Helpers.showSnackBar;
+
+  final CartRepository _repository;
+  final void Function({required String message, bool error}) _notify;
+  final _state = CartControllerState();
+  final isLoading = false.obs;
+  final isSubmitting = false.obs;
   final busyItemId = RxnInt();
   final RxString errorMessage = ''.obs;
-
-  int get count => summary.value.itemsCount;
 
   @override
   void onInit() {
@@ -23,35 +32,20 @@ class CartGetxController extends GetxController {
   }
 
   Future<void> fetchCart() async {
-    String token = UserGetStorage().getToken();
-    if (token.isEmpty) return;
-
+    if (UserGetStorage().getToken().isEmpty) return;
     isLoading.value = true;
+    _refreshDisplayState();
     errorMessage.value = '';
-
     try {
-      final response = await http
-          .get(
-            Uri.parse(ApiSettings.cart),
-            headers: {
-              'Accept': 'application/json',
-              'Accept-Language': 'ar',
-              'Authorization': 'Bearer $token',
-            },
-          )
-          .timeout(ApiSettings.timeout);
-
-      final body = jsonDecode(utf8.decode(response.bodyBytes));
-
-      if (response.statusCode == 200 && body['success'] == true) {
-        summary.value = CartResponse.fromJson(body).data ?? CartSummary();
-      } else {
-        errorMessage.value = body['message'] ?? "فشل في جلب السلة.";
+      switch (await _repository.fetch()) {
+        case CartSuccess(:final summary):
+          _apply(summary);
+        case CartFailure(:final message):
+          errorMessage.value = message;
       }
-    } catch (e) {
-      errorMessage.value = "تعذر الاتصال بالخادم، تحقق من الإنترنت";
     } finally {
       isLoading.value = false;
+      _refreshDisplayState();
     }
   }
 
@@ -61,45 +55,15 @@ class CartGetxController extends GetxController {
     Map<String, String>? options,
   }) async {
     isSubmitting.value = true;
-
     try {
-      final response = await http
-          .post(
-            Uri.parse(ApiSettings.cartItems),
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Accept-Language': 'ar',
-              'Authorization': 'Bearer ${UserGetStorage().getToken()}',
-            },
-            body: jsonEncode({
-              'product_id': productId,
-              'quantity': quantity,
-              if (options != null && options.isNotEmpty) 'options': options,
-            }),
-          )
-          .timeout(ApiSettings.timeout);
-
-      final body = jsonDecode(utf8.decode(response.bodyBytes));
-
-      if ((response.statusCode == 200 || response.statusCode == 201) &&
-          body['success'] == true) {
-        summary.value = CartResponse.fromJson(body).data ?? CartSummary();
-        Helpers.showSnackBar(message: body['message'] ?? 'تمت الإضافة للسلة');
-        return true;
-      } else {
-        Helpers.showSnackBar(
-          message: body['message'] ?? 'فشلت الإضافة للسلة',
-          error: true,
-        );
-        return false;
-      }
-    } catch (e) {
-      Helpers.showSnackBar(
-        message: 'تعذر الاتصال بالخادم، تحقق من الإنترنت',
-        error: true,
+      return _handle(
+        await _repository.add(
+          productId: productId,
+          quantity: quantity,
+          options: options,
+        ),
+        successMessage: AppStrings.cartAddSucceeded,
       );
-      return false;
     } finally {
       isSubmitting.value = false;
     }
@@ -108,36 +72,8 @@ class CartGetxController extends GetxController {
   Future<void> updateQuantity(CartItem item, int quantity) async {
     if (quantity < 1) return removeItem(item);
     busyItemId.value = item.id;
-
     try {
-      final response = await http
-          .patch(
-            Uri.parse('${ApiSettings.cartItems}/${item.id}'),
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Accept-Language': 'ar',
-              'Authorization': 'Bearer ${UserGetStorage().getToken()}',
-            },
-            body: jsonEncode({'quantity': quantity}),
-          )
-          .timeout(ApiSettings.timeout);
-
-      final body = jsonDecode(utf8.decode(response.bodyBytes));
-
-      if (response.statusCode == 200 && body['success'] == true) {
-        summary.value = CartResponse.fromJson(body).data ?? CartSummary();
-      } else {
-        Helpers.showSnackBar(
-          message: body['message'] ?? 'فشل تعديل الكمية',
-          error: true,
-        );
-      }
-    } catch (e) {
-      Helpers.showSnackBar(
-        message: 'تعذر الاتصال بالخادم، تحقق من الإنترنت',
-        error: true,
-      );
+      _handle(await _repository.updateQuantity(item.id, quantity));
     } finally {
       busyItemId.value = null;
     }
@@ -145,36 +81,8 @@ class CartGetxController extends GetxController {
 
   Future<void> removeItem(CartItem item) async {
     busyItemId.value = item.id;
-
     try {
-      final response = await http
-          .delete(
-            Uri.parse('${ApiSettings.cartItems}/${item.id}'),
-            headers: {
-              'Accept': 'application/json',
-              'Accept-Language': 'ar',
-              'Authorization': 'Bearer ${UserGetStorage().getToken()}',
-            },
-          )
-          .timeout(ApiSettings.timeout);
-
-      final body = jsonDecode(utf8.decode(response.bodyBytes));
-
-      if (response.statusCode == 200 && body['success'] == true) {
-        summary.value = CartResponse.fromJson(body).data ?? CartSummary();
-      } else {
-        Helpers.showSnackBar(
-          message: body['message'] ?? 'فشل حذف المنتج',
-          error: true,
-        );
-        fetchCart();
-      }
-    } catch (e) {
-      Helpers.showSnackBar(
-        message: 'تعذر الاتصال بالخادم، تحقق من الإنترنت',
-        error: true,
-      );
-      fetchCart();
+      if (!_handle(await _repository.remove(item.id))) fetchCart();
     } finally {
       busyItemId.value = null;
     }
@@ -183,75 +91,13 @@ class CartGetxController extends GetxController {
   Future<bool> applyCoupon(String code) async {
     if (code.trim().isEmpty) return false;
     isSubmitting.value = true;
-
     try {
-      final response = await http
-          .post(
-            Uri.parse(ApiSettings.cartCoupon),
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Accept-Language': 'ar',
-              'Authorization': 'Bearer ${UserGetStorage().getToken()}',
-            },
-            body: jsonEncode({'code': code.trim()}),
-          )
-          .timeout(ApiSettings.timeout);
-
-      final body = jsonDecode(utf8.decode(response.bodyBytes));
-
-      if (response.statusCode == 200 && body['success'] == true) {
-        summary.value = CartResponse.fromJson(body).data ?? CartSummary();
-        Helpers.showSnackBar(message: body['message'] ?? 'تم تطبيق الكوبون');
-        return true;
-      } else {
-        Helpers.showSnackBar(
-          message: body['message'] ?? 'الكوبون غير صالح',
-          error: true,
-        );
-        return false;
-      }
-    } catch (e) {
-      Helpers.showSnackBar(
-        message: 'تعذر الاتصال بالخادم، تحقق من الإنترنت',
-        error: true,
+      return _handle(
+        await _repository.applyCoupon(code.trim()),
+        successMessage: AppStrings.cartCouponApplied,
       );
-      return false;
     } finally {
       isSubmitting.value = false;
     }
   }
-
-  Future<void> removeCoupon() async {
-    try {
-      final response = await http
-          .delete(
-            Uri.parse(ApiSettings.cartCoupon),
-            headers: {
-              'Accept': 'application/json',
-              'Accept-Language': 'ar',
-              'Authorization': 'Bearer ${UserGetStorage().getToken()}',
-            },
-          )
-          .timeout(ApiSettings.timeout);
-
-      final body = jsonDecode(utf8.decode(response.bodyBytes));
-
-      if (response.statusCode == 200 && body['success'] == true) {
-        summary.value = CartResponse.fromJson(body).data ?? CartSummary();
-      } else {
-        Helpers.showSnackBar(
-          message: body['message'] ?? 'فشل إزالة الكوبون',
-          error: true,
-        );
-      }
-    } catch (e) {
-      Helpers.showSnackBar(
-        message: 'تعذر الاتصال بالخادم، تحقق من الإنترنت',
-        error: true,
-      );
-    }
-  }
-
-  void reset() => summary.value = CartSummary();
 }

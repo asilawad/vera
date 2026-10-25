@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 import 'package:souqna_anaqa/getx_controller/user_profile_getx_controller.dart';
 
@@ -33,13 +34,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       name: _name.text,
       phone: _phone.text,
     );
+    if (!mounted) return;
     if (ok) Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('تعديل بياناتي')),
+      appBar: const GlassAppBar(title: Text('تعديل بياناتي')),
       body: Form(
         key: _form,
         child: ListView(

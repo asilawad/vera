@@ -6,10 +6,12 @@ import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/getx_controller/order_getx_controller.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/models/order.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 import 'package:souqna_anaqa/widget/states.dart';
 import 'package:souqna_anaqa/screen/setting/order_details_screen.dart';
+import 'package:souqna_anaqa/widget/glass_app_bar.dart';
 
 /// ألوان حالات الطلب.
 Color orderStatusColor(String status) => switch (status) {
@@ -49,55 +51,79 @@ class _OrdersScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('طلباتي')),
-      body: Obx(() {
-        if (c.isLoading.value) {
-          return ListView(
-            padding: centeredPadding(
-              MediaQuery.sizeOf(context).width,
-              maxWidth: Responsive.readingMaxWidth,
-              top: 20,
-            ),
-            children: List.generate(
-              5,
-              (_) => const Padding(
-                padding: EdgeInsets.only(bottom: 12),
-                child: Skeleton(height: 96, radius: 20),
+      appBar: const GlassAppBar(title: Text('طلباتي')),
+      extendBodyBehindAppBar: true,
+      body: Padding(
+        padding: EdgeInsetsDirectional.only(
+          top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
+        ),
+        child: Obx(() {
+          if (c.isLoading.value) {
+            return SkeletonShimmer(
+              child: ListView(
+                padding: centeredPadding(
+                  MediaQuery.sizeOf(context).width,
+                  maxWidth: Responsive.readingMaxWidth,
+                  top: AppSpacing.page,
+                ),
+                children: List.generate(
+                  AppSizes.skeletonReviewCount,
+                  (_) => Padding(
+                    padding: EdgeInsetsDirectional.only(bottom: AppSpacing.md),
+                    child: Skeleton(
+                      height: AppSizes.reviewSkeletonHeight,
+                      radius: AppRadius.card,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          );
-        }
-        if (c.errorMessage.value.isNotEmpty) {
-          return ErrorView(
-            message: c.errorMessage.value,
-            onRetry: c.fetchOrders,
-          );
-        }
-        if (c.ordersList.isEmpty) {
-          return EmptyView(
-            icon: Icons.receipt_long_outlined,
-            title: 'لا توجد طلبات بعد',
-            body: 'عندما تطلبين، ستجدين طلباتك وتتبعها هنا.',
-            action: 'تسوّقي الآن',
-            onAction: Get.back,
-          );
-        }
-        return RefreshIndicator(
-          onRefresh: c.fetchOrders,
-          child: ListView.separated(
-            padding: centeredPadding(
-              MediaQuery.sizeOf(context).width,
-              maxWidth: Responsive.readingMaxWidth,
-              top: 20,
-              bottom: 20 + MediaQuery.paddingOf(context).bottom,
-            ),
-            itemCount: c.ordersList.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (_, i) => _OrderCard(c.ordersList[i]),
-          ),
-        );
-      }),
+            );
+          }
+          if (c.errorMessage.value.isNotEmpty) {
+            return ErrorView(
+              message: c.errorMessage.value,
+              onRetry: c.fetchOrders,
+            );
+          }
+          return _OrdersListState(c);
+        }),
+      ),
     );
+  }
+}
+
+class _OrdersListState extends StatelessWidget {
+  const _OrdersListState(this.controller);
+
+  final OrderGetxController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (controller.ordersList.isEmpty) {
+        return EmptyView(
+          icon: Icons.receipt_long_outlined,
+          title: 'لا توجد طلبات بعد',
+          body: 'عندما تطلبين، ستجدين طلباتك وتتبعها هنا.',
+          action: 'تسوّقي الآن',
+          onAction: Get.back,
+        );
+      }
+      return RefreshIndicator(
+        onRefresh: controller.fetchOrders,
+        child: ListView.separated(
+          padding: centeredPadding(
+            MediaQuery.sizeOf(context).width,
+            maxWidth: Responsive.readingMaxWidth,
+            top: 20,
+            bottom: 20 + MediaQuery.paddingOf(context).bottom,
+          ),
+          itemCount: controller.ordersList.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
+          itemBuilder: (_, i) => _OrderCard(controller.ordersList[i]),
+        ),
+      );
+    });
   }
 }
 
@@ -116,6 +142,7 @@ class _OrderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         onTap: () async {
           await Get.to(() => OrderDetailsScreen(id: order.id));
+          if (!context.mounted) return;
           Get.find<OrderGetxController>().fetchOrders();
         },
         child: Container(

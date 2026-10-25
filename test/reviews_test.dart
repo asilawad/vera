@@ -116,7 +116,7 @@ void main() {
               const GetMaterialApp(home: ReviewsScreen(productId: 75)),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('كل التقييمات (3)'), findsOneWidget);
       expect(find.byType(ReviewCard), findsNWidgets(2));

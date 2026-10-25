@@ -6,15 +6,20 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:souqna_anaqa/getx_controller/app_getx_controller.dart';
 import 'package:souqna_anaqa/utils/helpers.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
 import 'package:souqna_anaqa/widget/net_image.dart';
+import 'package:souqna_anaqa/widget/loading.dart';
+import 'package:souqna_anaqa/widget/glass_icon_button.dart';
+import 'package:souqna_anaqa/widget/glass_sliver_app_bar.dart';
 
 /// عن المتجر: الغلاف، الوصف، التوصيل، وأزرار الاتصال وواتساب.
 class StoreDetailsScreen extends StatelessWidget {
   const StoreDetailsScreen({super.key});
 
-  Future<void> _open(Uri uri) async {
+  Future<void> _open(BuildContext context, Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (!context.mounted) return;
       Helpers.showSnackBar(message: 'تعذّر فتح التطبيق', error: true);
     }
   }
@@ -23,27 +28,27 @@ class StoreDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = Get.find<AppGetxController>().store.value;
     if (store == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: StoreDetailsSkeleton());
     }
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
+          GlassSliverAppBar(
             // 220 على عرض 375 كما في التصميم، مع حد أدنى وأقصى للشاشات الأخرى.
             expandedHeight: (MediaQuery.sizeOf(context).width * 0.587).clamp(
               200,
               340,
             ),
-            pinned: true,
-            leading: const Padding(
-              padding: EdgeInsets.all(8),
-              child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: BackButton(color: AppColors.ink),
+            leading: Padding(
+              padding: EdgeInsetsDirectional.all(AppSpacing.sm),
+              child: GlassIconButton(
+                icon: Icons.arrow_back_rounded,
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                onPressed: () => Navigator.maybePop(context),
               ),
             ),
-            flexibleSpace: FlexibleSpaceBar(background: NetImage(store.cover)),
+            background: NetImage(store.cover),
           ),
           SliverToBoxAdapter(
             child: MaxWidthBox(
@@ -146,6 +151,7 @@ class StoreDetailsScreen extends StatelessWidget {
                           foregroundColor: Colors.white,
                         ),
                         onPressed: () => _open(
+                          context,
                           Uri.parse(
                             'https://wa.me/${store.whatsapp!.replaceAll(RegExp(r'[^0-9]'), '')}',
                           ),
@@ -156,7 +162,8 @@ class StoreDetailsScreen extends StatelessWidget {
                     if (store.phone != null) ...[
                       const SizedBox(height: 10),
                       OutlinedButton.icon(
-                        onPressed: () => _open(Uri.parse('tel:${store.phone}')),
+                        onPressed: () =>
+                            _open(context, Uri.parse('tel:${store.phone}')),
                         icon: const Icon(Icons.call_outlined),
                         label: Text('اتصال: ${store.phone}'),
                       ),

@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
+import 'package:souqna_anaqa/utils/app_motion.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/widget/loading.dart';
 
@@ -34,27 +34,16 @@ class NetImage extends StatelessWidget {
     final Widget image;
     if (url == null || url!.isEmpty) {
       image = placeholder;
-    } else if (kIsWeb) {
-      // على الويب: صور /uploads على الخادم بلا ترويسة CORS فيفشل جلبها كبايتات؛
-      // fallback يعرضها كعنصر <img> عادي، والمتصفح يتولى التخزين المؤقت.
-      image = Image.network(
-        url!,
-        width: width,
-        height: height,
-        fit: fit,
-        webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
-        loadingBuilder: (_, child, progress) =>
-            progress == null ? child : Skeleton(width: width, height: height),
-        errorBuilder: (_, _, _) => placeholder,
-      );
     } else {
       image = CachedNetworkImage(
         imageUrl: url!,
         width: width,
         height: height,
         fit: fit,
-        fadeInDuration: const Duration(milliseconds: 250),
-        placeholder: (_, _) => Skeleton(width: width, height: height),
+        fadeInDuration: AppMotion.normal,
+        placeholder: (_, _) => SkeletonShimmer(
+          child: Skeleton(width: width, height: height),
+        ),
         errorWidget: (_, _, _) => placeholder,
       );
     }

@@ -2,25 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/models/product.dart';
-import 'package:souqna_anaqa/widget/favorite_icon.dart';
-import 'package:souqna_anaqa/widget/net_image.dart';
-import 'package:souqna_anaqa/widget/price.dart';
+import 'package:souqna_anaqa/utils/app_colors.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
+import 'package:souqna_anaqa/utils/app_strings.dart';
+import 'package:souqna_anaqa/widget/product_card_image.dart';
+import 'package:souqna_anaqa/widget/product_hero.dart';
+import 'package:souqna_anaqa/widget/price_tag.dart';
 import 'package:souqna_anaqa/screen/home/product_details_screen.dart';
+import 'package:souqna_anaqa/utils/app_motion.dart';
 
 /// بطاقة المنتج في القوائم: صورة كبيرة، خصم، مفضلة، اسم، سعر، تقييم.
 class ProductCard extends StatelessWidget {
   const ProductCard(
     this.product, {
     super.key,
-    this.heroPrefix = 'p',
+    this.heroPrefix = AppStrings.heroProductDefault,
     this.imageAspect = gridImageAspect,
   });
 
   /// نسب الصور من فيجما: الشبكة 164×195، والقوائم الأفقية 168×220.
-  static const gridImageAspect = 164 / 195;
-  static const railImageAspect = 168 / 220;
+  static const gridImageAspect = AppSizes.productGridImageAspect;
+  static const railImageAspect = AppSizes.productRailImageAspect;
 
   final Product product;
   final String heroPrefix;
@@ -28,130 +31,88 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
     return GestureDetector(
       onTap: () => Get.to(
         () => ProductDetailsScreen(
           id: product.id,
           product: product,
-          hero: '$heroPrefix-${product.id}',
+          hero: ProductHero.tagFor(heroPrefix, product.id),
         ),
         preventDuplicates: false,
+        transition: Transition.fadeIn,
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : AppMotion.slow,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: imageAspect,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Hero(
-                    tag: '$heroPrefix-${product.id}',
-                    child: NetImage(
-                      product.thumb ?? product.image,
-                      radius: 20.r,
-                    ),
-                  ),
-                ),
-                if (product.discountPercent != null)
-                  PositionedDirectional(
-                    top: 10,
-                    start: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: primary,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        '-${product.discountPercent}%',
-                        textDirection: TextDirection.ltr,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                PositionedDirectional(
-                  top: 8,
-                  end: 8,
-                  child: FavoriteIcon(product, size: 36),
-                ),
-                if (!product.inStock)
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.55),
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      alignment: Alignment.center,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.ink,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'نفدت الكمية',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          border: Border.all(color: AppColors.line),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadow,
+              blurRadius: AppSizes.cardShadowBlur,
             ),
-          ),
-          const SizedBox(height: 10),
-          if (product.categoryName != null)
-            Text(
-              product.categoryName!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 11.sp, color: AppColors.subtle),
-            ),
-          // سطران للاسم: الأسماء العربية الطويلة شائعة، وارتفاع الصف يتبع المحتوى.
-          Text(
-            product.name,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Row(
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsetsDirectional.all(AppSizes.productHeaderInset),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: PriceView(product, size: 14)),
-              if (product.ratingCount > 0) ...[
-                Icon(
-                  Icons.star_rounded,
-                  size: 14.sp,
-                  color: const Color(0xFFF5A623),
-                ),
-                const SizedBox(width: 2),
+              ProductCardImage(
+                product: product,
+                heroPrefix: heroPrefix,
+                aspectRatio: imageAspect,
+              ),
+              SizedBox(height: AppSpacing.compact),
+              if (product.categoryName != null)
                 Text(
-                  product.ratingAverage.toStringAsFixed(1),
-                  style: TextStyle(fontSize: 12.sp, color: AppColors.muted),
+                  product.categoryName!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: AppSizes.productCategoryFont.sp,
+                    color: AppColors.subtle,
+                  ),
                 ),
-              ],
+              Text(
+                product.name,
+                maxLines: AppSizes.productNameMaxLines,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: AppSizes.productNameFont.sp,
+                  fontWeight: FontWeight.w600,
+                  height: AppSizes.productNameLineHeight,
+                ),
+              ),
+              SizedBox(height: AppSpacing.xs),
+              Row(
+                children: [
+                  Expanded(
+                    child: PriceTag(product, size: AppSizes.productPriceFont),
+                  ),
+                  if (product.ratingCount > 0) ...[
+                    Icon(
+                      Icons.star_rounded,
+                      size: AppSizes.ratingStar.sp,
+                      color: AppColors.star,
+                    ),
+                    SizedBox(width: AppSpacing.xxs),
+                    Text(
+                      product.ratingAverage.toStringAsFixed(1),
+                      style: TextStyle(
+                        fontSize: AppSizes.productRatingFont.sp,
+                        color: AppColors.muted,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
