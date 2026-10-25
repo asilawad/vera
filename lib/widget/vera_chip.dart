@@ -30,8 +30,11 @@ class VeraChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.chip),
         child: AnimatedContainer(
           duration: AppMotion.fast,
-          height: AppSizes.chipHeight,
-          padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.md),
+          constraints: BoxConstraints(minHeight: AppSizes.chipHeight),
+          padding: EdgeInsetsDirectional.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.xs,
+          ),
           decoration: BoxDecoration(
             color: selected ? AppColors.primary : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.chip),
@@ -39,6 +42,7 @@ class VeraChip extends StatelessWidget {
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (icon != null) ...[
                 Icon(icon, size: AppSizes.chipIcon, color: foreground),
@@ -46,6 +50,8 @@ class VeraChip extends StatelessWidget {
               ],
               Text(
                 label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: foreground,
                   fontWeight: FontWeight.w600,

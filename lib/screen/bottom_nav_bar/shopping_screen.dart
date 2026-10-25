@@ -35,32 +35,38 @@ class ShoppingScreen extends StatelessWidget {
         padding: EdgeInsetsDirectional.only(
           top: AppSizes.appBarHeight + MediaQuery.paddingOf(context).top,
         ),
-        child: !Get.find<UserProfileGetxController>().isLoggedIn
-            ? EmptyView(
-                icon: Icons.lock_outline_rounded,
-                title: AppStrings.cartLoginRequired,
-                body: AppStrings.cartLoginPrompt,
-                action: AppStrings.login,
-                onAction: () => Get.to(() => const LoginScreen()),
-              )
-            : Obx(() {
-                switch (cart.displayState.value) {
-                  case CartDisplayState.loading:
-                    return const CartSkeleton();
-                  case CartDisplayState.empty:
-                    return EmptyView(
-                      icon: Icons.shopping_bag_outlined,
-                      title: AppStrings.cartEmptyTitle,
-                      body: AppStrings.cartEmptyPrompt,
-                      action: AppStrings.startShopping,
-                      onAction: () => MainScreenController.to.go(0),
-                    );
-                  case CartDisplayState.content:
-                    return const CartContent();
-                }
-              }),
+        child: Column(
+          children: [
+            Expanded(
+              child: !Get.find<UserProfileGetxController>().isLoggedIn
+                  ? EmptyView(
+                      icon: Icons.lock_outline_rounded,
+                      title: AppStrings.cartLoginRequired,
+                      body: AppStrings.cartLoginPrompt,
+                      action: AppStrings.login,
+                      onAction: () => Get.to(() => const LoginScreen()),
+                    )
+                  : Obx(() {
+                      switch (cart.displayState.value) {
+                        case CartDisplayState.loading:
+                          return const CartSkeleton();
+                        case CartDisplayState.empty:
+                          return EmptyView(
+                            icon: Icons.shopping_bag_outlined,
+                            title: AppStrings.cartEmptyTitle,
+                            body: AppStrings.cartEmptyPrompt,
+                            action: AppStrings.startShopping,
+                            onAction: () => MainScreenController.to.go(0),
+                          );
+                        case CartDisplayState.content:
+                          return const CartContent();
+                      }
+                    }),
+            ),
+            const CartCheckoutSheet(),
+          ],
+        ),
       ),
-      bottomSheet: const CartCheckoutSheet(),
     );
   }
 }

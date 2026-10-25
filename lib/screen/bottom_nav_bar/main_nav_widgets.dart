@@ -34,7 +34,7 @@ class MainBottomBar extends StatelessWidget {
         AppSpacing.lg,
         0,
         AppSpacing.lg,
-        AppSpacing.md,
+        AppSizes.bottomNavigationMargin,
       ).resolve(Directionality.of(context)),
       child: Align(
         heightFactor: 1,

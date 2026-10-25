@@ -52,13 +52,15 @@ class GlassSliverAppBar extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               background,
-              AnimatedOpacity(
-                opacity: collapse,
-                duration: AppMotion.normal,
-                curve: AppMotion.standard,
-                child: const GlassContainer(
-                  radius: AppRadius.none,
-                  child: SizedBox.expand(),
+              IgnorePointer(
+                child: AnimatedOpacity(
+                  opacity: collapse,
+                  duration: AppMotion.normal,
+                  curve: AppMotion.standard,
+                  child: const GlassContainer(
+                    radius: AppRadius.none,
+                    child: SizedBox.expand(),
+                  ),
                 ),
               ),
             ],

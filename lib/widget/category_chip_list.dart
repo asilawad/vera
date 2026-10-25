@@ -23,26 +23,35 @@ class CategoryChipList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final offset = showAll ? 1 : 0;
+    final height =
+        MediaQuery.textScalerOf(context).scale(AppSizes.chipHeight) +
+        AppSpacing.xs;
     return SizedBox(
-      height: AppSizes.chipHeight,
+      height: height,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length + offset,
         separatorBuilder: (_, _) => SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, index) {
           if (showAll && index == 0) {
-            return VeraChip(
-              label: AppStrings.categoryAll,
-              icon: Icons.grid_view_rounded,
-              selected: selectedId == null,
-              onTap: () => onSelected(null),
+            return SizedBox(
+              height: height,
+              child: VeraChip(
+                label: AppStrings.categoryAll,
+                icon: Icons.grid_view_rounded,
+                selected: selectedId == null,
+                onTap: () => onSelected(null),
+              ),
             );
           }
           final category = categories[index - offset];
-          return CategoryChip(
-            category: category,
-            selected: selectedId == category.id,
-            onSelected: () => onSelected(category.id),
+          return SizedBox(
+            height: height,
+            child: CategoryChip(
+              category: category,
+              selected: selectedId == category.id,
+              onSelected: () => onSelected(category.id),
+            ),
           );
         },
       ),

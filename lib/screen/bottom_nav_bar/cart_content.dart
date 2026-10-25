@@ -20,7 +20,6 @@ class CartContent extends StatelessWidget {
           MediaQuery.sizeOf(context).width,
           maxWidth: Responsive.readingMaxWidth,
           top: 8,
-          bottom: Responsive.bottomClearance(context, 150),
         ),
         children: [
           Obx(

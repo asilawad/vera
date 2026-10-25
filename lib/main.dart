@@ -14,6 +14,7 @@ import 'package:souqna_anaqa/getx_controller/order_getx_controller.dart';
 import 'package:souqna_anaqa/getx_controller/user_profile_getx_controller.dart';
 import 'package:souqna_anaqa/screen/lunch/lunch_screen.dart';
 import 'package:souqna_anaqa/screen/bottom_nav_bar/main_screen.dart';
+import 'package:souqna_anaqa/utils/app_scroll_behavior.dart';
 import 'package:souqna_anaqa/utils/app_colors.dart';
 import 'package:souqna_anaqa/utils/app_brand.dart';
 import 'package:souqna_anaqa/utils/responsive.dart';
@@ -72,6 +73,7 @@ class VeraApp extends StatelessWidget {
         return GetMaterialApp(
           title: AppBrand.name,
           debugShowCheckedModeBanner: false,
+          scrollBehavior: const AppScrollBehavior(),
           theme: AppTheme.build(Get.find<AppGetxController>().primary.value),
           locale: const Locale('ar'),
           fallbackLocale: const Locale('ar'),

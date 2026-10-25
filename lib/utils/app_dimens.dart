@@ -57,7 +57,7 @@ class AppSizes {
   static double get borderWidth => 2.w;
   static double get buttonHeight => 48.h;
   static double get galleryHeight => 375.h;
-  static double get chipHeight => 40.h;
+  static double get chipHeight => 40.w;
   static double get chipIcon => 18.w;
   static double get dot => 6.w;
   static double get dotActive => 18.w;
@@ -72,6 +72,7 @@ class AppSizes {
   static double get productPriceFont => 14;
   static double get productRatingFont => 12;
   static double get productStockFont => 12;
+  static double get cartMinOrderFont => 13.sp;
   static const double productGridImageAspect = 164 / 195;
   static const double productRailImageAspect = 168 / 220;
   static double get skeletonTextHeight => 14.h;
@@ -99,7 +100,7 @@ class AppSizes {
   static double get homeBannerPageTabletPadding => 10.w;
   static double get homeCardImageTextGap => 10.h;
   static double get homeCardPadding => 10.w;
-  static double get homeProductRailHeight => 360.h;
+  static const int homeProductPriceMaxLines = 2;
   static double get homeProductRailWidth => 168.w;
   static double get homeHeaderVerticalPadding => 14.h;
   static double get homeSectionTopPadding => 26.h;
@@ -116,6 +117,7 @@ class AppSizes {
   static double get productHeaderInset => 10.w;
   static const double bottomNavigationHeight = 68;
   static const double bottomNavigationMaxWidth = 560;
+  static double get bottomNavigationMargin => 12.w;
   static double get productDetailsBottomPadding => 140.h;
   static double get productDetailsDesktopBottomPadding => 120.h;
   static double get glassIconButton => 44.r;
@@ -143,9 +145,9 @@ class AppSizes {
   static const int eveningHour = 18;
   static const int homeCategoryTabIndex = 1;
   static const int productNameMaxLines = 2;
-  static const tabletBreakpoint = 600.0;
+  static const double tabletBreakpoint = 600.0;
   static const twoPaneWidth = 840.0;
-  static const desktopBreakpoint = 1024.0;
+  static const double desktopBreakpoint = 1024.0;
 
   /// Reserved width beside the cart label: stepper (40 + 34 + 40),
   /// row gap (12), button padding (16 + 24), icon (18), and icon-label gap (8).

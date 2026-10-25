@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:souqna_anaqa/utils/app_dimens.dart';
 
 /// كل ما يخص التجاوب في مكان واحد: مقاس التصميم، نقاط الانتقال، وحدود العرض.
 class Responsive {
@@ -14,8 +15,8 @@ class Responsive {
   static const maxScale = 1.2;
 
   /// نقاط الانتقال حسب العرض المتاح.
-  static const tablet = 600.0;
-  static const desktop = 1024.0;
+  static const tablet = AppSizes.tabletBreakpoint;
+  static const desktop = AppSizes.desktopBreakpoint;
 
   /// حدود عرض المحتوى على الشاشات الواسعة.
   static const contentMaxWidth = 1200.0;

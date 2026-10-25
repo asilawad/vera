@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:souqna_anaqa/models/product.dart';
 import 'package:souqna_anaqa/utils/app_dimens.dart';
@@ -16,10 +17,28 @@ class HomeHorizontalProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textScaler = MediaQuery.textScalerOf(context);
+    final cardContentWidth =
+        AppSizes.homeProductRailWidth - AppSizes.productHeaderInset * 2;
+    final imageHeight = cardContentWidth / ProductCard.railImageAspect;
+    final textHeight = textScaler.scale(
+      AppSizes.productCategoryFont.sp * AppSizes.productNameLineHeight +
+          AppSizes.productNameFont.sp *
+              AppSizes.productNameLineHeight *
+              AppSizes.productNameMaxLines +
+          AppSizes.productPriceFont.sp *
+              AppSizes.productNameLineHeight *
+              AppSizes.homeProductPriceMaxLines,
+    );
+    final railHeight =
+        AppSizes.productHeaderInset +
+        AppSizes.productHeaderInset +
+        imageHeight +
+        AppSpacing.compact +
+        textHeight +
+        AppSpacing.xs;
     return SizedBox(
-      height: MediaQuery.textScalerOf(
-        context,
-      ).scale(AppSizes.homeProductRailHeight),
+      height: railHeight,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.page),
